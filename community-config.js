@@ -6,8 +6,7 @@
  *    SOLO si las políticas RLS están activadas. Nunca pongas una service_role key aquí.
  */
 
-window.COMMUNITY_CONFIG = { 
+window.NEURAL_COMMUNITY_CONFIG = { 
  SUPABASE_URL: "https://sxykgsebgqlhhcxhpmsi.supabase.co", 
- SUPABASE_ANON_KEY: "sb_publishable_XsvEebF9ZovaM8hVKBjyGQ_1h5qyQc6" 
+ SUPABASE_ANON_KEY: "sb_publishable_XsvEebF9ZovaM8hVKBjyGQ_1h5qyQc6", maxUploadMB: 20 
 };
-
