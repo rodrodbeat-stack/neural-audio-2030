@@ -1,24 +1,20 @@
-# 888 Digital Factory — Neural Audio 2050
+# 888 Digital Factory — Neural Audio 2050 / Neural Community
 
-Web estática para GitHub Pages con estética cyberpunk rojo/negro y reproductor de audio funcional.
+Web estática cyberpunk para GitHub Pages, con reproductor de audio y panel comunitario de publicaciones.
 
-## Qué incluye
-- `index.html`: dashboard y controles.
-- `styles.css`: interfaz adaptable a escritorio y móvil.
-- `app.js`: reproductor, cola, siguiente/anterior, aleatorio, volumen, progreso y generador visual.
-- `music/neural-drift-demo.wav`: loop de audio synth original de demostración.
-- `assets/neural-audio-hero.png`: arte de cabecera fusionado.
+## Incluye
+- `index.html`, `styles.css`, `app.js`: dashboard y reproductor.
+- `community.js`, `community-config.js`: panel de subida y catálogo conectado a Supabase.
+- `supabase-schema.sql`: esquema inicial, RLS y bucket de audio.
+- `SETUP-SUPABASE.md`: instrucciones de conexión y moderación.
+- `music/neural-drift-demo.wav`: pista original de demostración.
+- `assets/neural-audio-hero.png`: arte visual del dashboard.
 
-## Publicar en GitHub Pages
-1. Crea un repositorio, por ejemplo `neural-audio-2050`.
-2. Descomprime el ZIP en tu computador.
-3. Sube el contenido de la carpeta (no la carpeta contenedora) a la raíz del repositorio. Debes ver `index.html`, `styles.css`, `app.js`, `assets/` y `music/` en la raíz.
-4. En GitHub abre **Settings → Pages**.
-5. En **Build and deployment**, selecciona **Deploy from a branch**, branch `main`, carpeta `/(root)`, y guarda.
-6. Espera a que termine el despliegue y abre la URL de GitHub Pages.
+## Importante
+El panel se ve sin configurar backend, pero para que las subidas sean globales debes crear y configurar Supabase. Las publicaciones quedan pendientes de moderación. El frontend ya implementa subida y catálogo; perfiles/login, comentarios, playlists y favoritos están previstos en el esquema pero necesitan pantallas y lógica adicionales.
 
-## Añadir tus canciones reales
-Sube tus archivos MP3 a `music/`. Después edita `app.js` y cambia el campo `src` de cada pista, por ejemplo:
-`src: "music/mi-tema.mp3"`
-
-Importante: por ahora las cinco pistas del dashboard usan el mismo audio de demostración; los nombres y la cola son de muestra. Para que cada canción suene diferente, coloca tus temas propios en `music/` y asigna un archivo distinto a cada pista. El navegador puede bloquear el autoplay; inicia con el botón **INITIALIZE AUDIO** o **▶**.
+## Publicación
+1. Crea un repositorio en GitHub.
+2. Sube el contenido de esta carpeta a la raíz.
+3. Configura Supabase siguiendo `SETUP-SUPABASE.md`.
+4. En GitHub, Settings → Pages → Deploy from a branch → `main` → `/(root)`.

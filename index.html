@@ -28,6 +28,7 @@
         <a class="nav-link" href="#playlist">☷ <span>PLAYLISTS</span></a>
         <a class="nav-link" href="#reproductor">◉ <span>RADIO NEURAL</span></a>
         <a class="nav-link" href="#forge">⚙ <span>GENERADOR</span></a>
+        <a class="nav-link" href="#community">⬆ <span>COMMUNITY UPLOAD</span></a>
         <a class="nav-link" href="#terminal">⚙ <span>CONFIGURACIÓN</span></a>
       </nav>
       <div class="genre-box">
@@ -123,7 +124,52 @@
       </section>
     </aside>
   </div>
+
+      <section class="panel community-panel" id="community">
+        <div class="section-heading">
+          <h2><span>✹</span> NEURAL COMMUNITY // AUDIO UPLOAD</h2>
+          <span class="community-live"><i></i> COMMUNITY NODE</span>
+        </div>
+        <p class="community-intro">Publica tus producciones, descubre artistas independientes y comparte ruido desde cualquier lugar.</p>
+
+        <div class="community-grid">
+          <form class="upload-form" id="uploadForm">
+            <h3>⬆ TRANSMITIR NUEVO AUDIO</h3>
+            <label>ARTISTA / ALIAS<input id="uploadArtist" name="artist" maxlength="60" required placeholder="Tu alias artístico"></label>
+            <label>TÍTULO DEL TRACK<input id="uploadTitle" name="title" maxlength="100" required placeholder="Nombre de la producción"></label>
+            <label>GÉNERO<select id="uploadGenre" name="genre"><option>Noise</option><option>Brutal Noise</option><option>Dark Ambient</option><option>Industrial</option><option>Cyberpunk</option><option>Dark Synth</option><option>Metal</option><option>Experimental</option><option>Otro</option></select></label>
+            <label>DESCRIPCIÓN<textarea id="uploadDescription" name="description" maxlength="500" rows="3" placeholder="Describe el sonido, equipo o concepto..."></textarea></label>
+            <label class="file-drop">ARCHIVO DE AUDIO
+              <input id="uploadFile" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4" required>
+              <span>ARRASTRA O SELECCIONA MP3 / WAV / OGG / M4A</span>
+              <small id="fileHint">Tamaño máximo recomendado: 20 MB</small>
+            </label>
+            <label class="rights-check"><input type="checkbox" id="rightsConfirm" required> Confirmo que tengo derechos para compartir este audio.</label>
+            <button class="btn-primary full" type="submit">⬆ PUBLICAR EN NEURAL COMMUNITY</button>
+            <p class="community-status" id="uploadStatus" aria-live="polite">CONECTA EL SERVICIO PARA PUBLICAR GLOBALMENTE.</p>
+          </form>
+
+          <div class="community-feed">
+            <div class="feed-heading"><div><h3>◉ TRANSMISIONES DE LA COMUNIDAD</h3><p class="muted">NUEVOS SONIDOS // INDEPENDIENTES</p></div>
+              <button class="small-button" id="refreshCommunity" type="button">↻ ACTUALIZAR</button>
+            </div>
+            <div id="communityTracks" class="community-tracks">
+              <article class="community-track demo-track">
+                <div class="track-art">888</div><div class="community-track-info"><b>Brutal Noise Transmission</b><span>888 Digital Factory · DEMO</span><small>BRUTAL NOISE / EXPERIMENTAL</small></div>
+                <audio controls preload="none" src="music/neural-drift-demo.wav"></audio>
+                <div class="community-actions"><button type="button" disabled>♡ 0</button><span>Audio de demostración</span></div>
+              </article>
+              <div class="community-empty" id="communityEmpty">Las publicaciones reales aparecerán aquí cuando configures la conexión comunitaria.</div>
+            </div>
+            <div class="community-note"><b>COMMUNITY PROTOCOL</b><span>Los audios reales se guardan en almacenamiento externo, no en GitHub Pages. Los archivos enviados pueden quedar pendientes de moderación.</span></div>
+          </div>
+        </div>
+      </section>
+
   <footer class="footer"><span>NEURAL AUDIO 2050 &nbsp; // &nbsp; STREAMING THE FUTURE</span><div class="waveform" aria-hidden="true"></div><span>888 DIGITAL FACTORY &nbsp; | &nbsp; PRIVACY &nbsp; | &nbsp; CONTACTO</span></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="community-config.js"></script>
+  <script src="community.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
