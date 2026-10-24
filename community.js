@@ -33,13 +33,13 @@ status.style.color = error ? "#ff6570" : "var(--green)";
 };
 
 const safe = value =>
-String(value ?? "").replace(/[&<>"']/g, ch => ({
-"&": "&",
-"<": "<",
-">": ">",
-'"': """,
-"'": "'"
-}[ch]));
+  String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[ch]));
 
 const formatDate = value => {
 if (!value) return "NUEVO";
