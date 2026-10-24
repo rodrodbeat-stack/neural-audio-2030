@@ -395,6 +395,97 @@ list.addEventListener("click", event => {
 const button = event.target.closest(".like-button");
 if (button) likeTrack(button.dataset.id, button);
 });
+// ========================================
+// NEURA — SUBIDA DE PORTADAS
+// Bucket de Supabase: imagenes
+// ========================================
+
+async function uploadTrackCover(file) {
+  if (!client) {
+    throw new Error("Supabase no está conectado.");
+  }
+
+  if (!file) {
+    return null;
+  }
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error("La portada debe ser JPG, PNG o WebP.");
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("La portada no puede superar los 5 MB.");
+  }
+
+  const extension = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp"
+  }[file.type];
+
+  const filename =
+    `covers/${crypto.randomUUID()}.${extension}`;
+
+  const { data, error } = await client.storage
+    .from("imagenes")
+    .upload(filename, file, {
+      cacheControl: "3600",
+      contentType: file.type,
+      upsert: false
+    });
+
+  if (error) {
+    console.error("Error subiendo portada:", error);
+    throw new Error(`No se pudo guardar la portada: ${error.message}`);
+  }
+
+  const { data: urlData } = client.storage
+    .from("imagenes")
+    .getPublicUrl(data.path);
+
+  return urlData.publicUrl;
+}
+
+// Vista previa de la portada seleccionada
+(() => {
+  const input = document.getElementById("trackCover");
+  const preview = document.getElementById("coverPreview");
+
+  if (!input || !preview) return;
+
+  input.addEventListener("change", () => {
+    const file = input.files?.[0];
+
+    if (!file) {
+      preview.hidden = true;
+      preview.removeAttribute("src");
+      return;
+    }
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      alert("Selecciona una imagen JPG, PNG o WebP.");
+      input.value = "";
+      preview.hidden = true;
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("La imagen debe pesar menos de 5 MB.");
+      input.value = "";
+      preview.hidden = true;
+      return;
+    }
+
+    preview.src = URL.createObjectURL(file);
+    preview.hidden = false;
+  });
+})();  
 }
 
 if (ready) {
