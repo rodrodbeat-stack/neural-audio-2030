@@ -29,3 +29,12 @@ El esquema crea tablas para perfiles, tracks, comentarios, favoritos y playlists
 
 ## 5. GitHub Pages
 Sube el contenido de esta carpeta a la raíz de tu repositorio, incluyendo `community-config.js`, `community.js`, `supabase-schema.sql`, `assets/` y `music/`.
+
+
+## 6. Solución: error “Bucket not found” al subir videos
+1. Abre Supabase → **SQL Editor** → **New query**.
+2. Abre el archivo `FIX-BUCKET-VIDEOS.sql` incluido en este ZIP, copia todo su contenido y ejecútalo con **Run**.
+3. La consulta final debe devolver una fila cuyo `id` sea exactamente `community-videos`.
+4. En Storage, confirma que exista el bucket `community-videos`; luego recarga la web y vuelve a intentar.
+
+El nombre distingue el bucket que usa el código: `community-videos` (con guion). No lo crees como `community_videos`, `videos` ni `community-video`. Si después aparece un error de permisos, vuelve a ejecutar el archivo SQL completo. No publiques nunca la clave `service_role` en el frontend.

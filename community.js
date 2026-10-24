@@ -624,7 +624,15 @@ renderRecentTracks();
         const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
         await client.storage.from('community-videos').remove([path]).catch(() => {});
       }
-      setStatus(`ERROR AL SUBIR VIDEO: ${error.message || 'revisa la configuración de Supabase'}`, true);
+      const rawMessage = String(error.message || error.error_description || 'revisa la configuración de Supabase');
+      const normalized = rawMessage.toLowerCase();
+      if (normalized.includes('bucket') && (normalized.includes('not found') || normalized.includes('does not exist') || normalized.includes('no existe'))) {
+        setStatus('BUCKET NO ENCONTRADO: abre Supabase → SQL Editor y ejecuta FIX-BUCKET-VIDEOS.sql. Debe crearse exactamente como community-videos. Luego vuelve a intentar.', true);
+      } else if (normalized.includes('row-level security') || normalized.includes('permission denied') || normalized.includes('not allowed')) {
+        setStatus('SUPABASE BLOQUEÓ LA SUBIDA POR PERMISOS. Ejecuta FIX-BUCKET-VIDEOS.sql en SQL Editor y revisa las políticas de Storage.', true);
+      } else {
+        setStatus(`ERROR AL SUBIR VIDEO: ${rawMessage}`, true);
+      }
     } finally {
       button.disabled = false;
     }

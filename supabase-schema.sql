@@ -146,7 +146,7 @@ create policy "anyone can submit videos to moderation" on public.video_posts for
 -- Storage bucket for video uploads. Configure size/MIME restrictions in Supabase Dashboard as needed.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('community-videos', 'community-videos', true, 104857600, array['video/mp4','video/webm','video/quicktime'])
-on conflict (id) do nothing;
+on conflict (id) do update set name = excluded.name, public = true, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
 drop policy if exists "community videos public read" on storage.objects;
 create policy "community videos public read" on storage.objects for select using (bucket_id = 'community-videos');
 drop policy if exists "community videos upload" on storage.objects;
