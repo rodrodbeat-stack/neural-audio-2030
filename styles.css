@@ -85,3 +85,14 @@
 }
 
 .track-art img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
+
+
+/* VIDEO UPLOAD NODE — NEURAL COMMUNITY */
+.video-upload-panel{margin:0 12px 18px;padding:16px;border:1px solid #64202b;background:linear-gradient(145deg,rgba(16,8,14,.98),rgba(3,7,11,.98));box-shadow:0 0 24px #ff172a0c;min-width:0}
+.video-upload-form{max-width:920px;border:1px solid #3a2630;padding:14px;background:linear-gradient(145deg,#100b11,#05090d);min-width:0}
+.video-upload-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.video-upload-form label:not(.file-drop):not(.rights-check){display:flex;flex-direction:column;gap:6px;color:#9bb5c4;font-size:10px;letter-spacing:.6px;margin:10px 0}
+.video-upload-form input:not([type=file]):not([type=checkbox]){width:100%;min-width:0;background:#05080d;border:1px solid #34444f;color:#e0edf4;padding:10px;font:inherit;font-size:14px}
+.video-file-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin:12px 0;padding:24px 14px;border:1px dashed #ff3548;background:radial-gradient(ellipse at center,#2b0b14,#08090e 72%);cursor:pointer;min-width:0;text-align:center}
+.video-upload-icon{font-size:34px;color:#ff3548;text-shadow:0 0 15px #ff172a}.video-file-drop strong{font:700 12px Orbitron,sans-serif;color:#ff5360}.video-file-drop small{color:#91a9b7;font-size:11px}.video-file-drop input[type=file]{display:block;width:100%;max-width:420px;margin-top:6px;color:#cbdce5;font-size:12px}
+.community-video-preview{display:block;width:100%;max-width:720px;max-height:420px;object-fit:contain;background:#020305;border:1px solid #6f1b26;margin:12px auto}.community-video-preview[hidden]{display:none}.video-file-info{font:10px monospace;color:#00ffc3;overflow-wrap:anywhere;margin:8px 0}.video-upload-form .rights-check{display:flex;align-items:flex-start;gap:8px;color:#9bb5c4;font-size:11px;margin:12px 0}.video-upload-form .rights-check input{accent-color:#ff202d;margin-top:2px}.video-upload-form .full{max-width:720px}.community-videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}.community-video-card{border:1px solid #293b46;background:#070b10;padding:10px;min-width:0}.community-video-card video{width:100%;max-height:260px;background:#000;display:block}.community-video-card b,.community-video-card small{display:block;overflow-wrap:anywhere;margin-top:7px}.community-video-card b{font:11px Orbitron,sans-serif;color:#ff5965}.community-video-card small{color:#9bb5c4;font-size:11px}@media(max-width:650px){.video-upload-panel{margin:0 8px 14px;padding:10px}.video-upload-form{padding:10px}.video-upload-fields{grid-template-columns:1fr}.video-file-drop{padding:18px 8px}.community-video-preview{max-height:250px}}

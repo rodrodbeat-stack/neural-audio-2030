@@ -392,7 +392,34 @@
   </div>
 </div>
 
-  </section>  <footer class="footer">
+  </section>
+
+  <section class="video-upload-panel" id="videoUploadPanel">
+    <div class="section-heading">
+      <h2><span>▣</span> NEURAL COMMUNITY // VIDEO TRANSMISSION</h2>
+      <span class="community-live"><i></i> VIDEO NODE</span>
+    </div>
+    <p class="community-intro">Comparte videoclips, visuales cyberpunk, sesiones en vivo y material de tus producciones.</p>
+    <form id="videoUploadForm" class="video-upload-form">
+      <div class="video-upload-fields">
+        <label>ARTISTA / ALIAS<input id="videoArtist" maxlength="60" required placeholder="Tu alias artístico"></label>
+        <label>TÍTULO DEL VIDEO<input id="videoTitle" maxlength="100" required placeholder="Nombre del videoclip"></label>
+      </div>
+      <label class="file-drop video-file-drop" for="communityVideoFile">
+        <span class="video-upload-icon">⬆</span><strong>SELECCIONAR VIDEO PARA SUBIR</strong>
+        <small>MP4 / WebM / MOV · máximo recomendado 100 MB</small>
+        <input id="communityVideoFile" type="file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" required>
+      </label>
+      <video id="communityVideoPreview" class="community-video-preview" controls playsinline preload="metadata" hidden></video>
+      <div id="videoFileInfo" class="video-file-info" aria-live="polite">ESPERANDO ARCHIVO DE VIDEO...</div>
+      <label class="rights-check"><input id="videoRightsConfirm" type="checkbox" required> Confirmo que tengo derechos para compartir este video.</label>
+      <button id="publishVideoButton" class="btn-primary full" type="submit">⬆ PUBLICAR VIDEO EN NEURAL COMMUNITY</button>
+      <p id="videoUploadStatus" class="community-status" aria-live="polite">Selecciona un video para ver la vista previa. La publicación global requiere configurar Supabase.</p>
+    </form>
+    <div id="communityVideos" class="community-videos" aria-live="polite"></div>
+  </section>
+
+  <footer class="footer">
     <span>NEURAL AUDIO 2050 &nbsp; // &nbsp; STREAMING THE FUTURE</span>
     <div class="waveform" aria-hidden="true"></div>
     <span>888 DIGITAL FACTORY &nbsp; | &nbsp; PRIVACY &nbsp; | &nbsp; CONTACTO</span>

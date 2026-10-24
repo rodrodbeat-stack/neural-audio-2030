@@ -125,3 +125,31 @@ on conflict (id) do update set public = true, file_size_limit = excluded.file_si
 create policy "community cover upload" on storage.objects for insert to anon, authenticated
 with check (bucket_id = 'imagenes');
 create policy "community cover public read" on storage.objects for select using (bucket_id = 'imagenes');
+
+
+-- VIDEO COMMUNITY: public metadata is only readable after moderation.
+create table if not exists public.video_posts (
+  id uuid primary key default gen_random_uuid(),
+  artist text not null check (char_length(artist) between 1 and 60),
+  title text not null check (char_length(title) between 1 and 100),
+  video_path text not null,
+  video_url text not null,
+  status text not null default 'pending' check (status in ('pending','published','rejected')),
+  created_at timestamptz not null default now()
+);
+alter table public.video_posts enable row level security;
+drop policy if exists "published videos are public" on public.video_posts;
+create policy "published videos are public" on public.video_posts for select using (status = 'published');
+drop policy if exists "anyone can submit videos to moderation" on public.video_posts;
+create policy "anyone can submit videos to moderation" on public.video_posts for insert to anon, authenticated with check (status = 'pending');
+
+-- Storage bucket for video uploads. Configure size/MIME restrictions in Supabase Dashboard as needed.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('community-videos', 'community-videos', true, 104857600, array['video/mp4','video/webm','video/quicktime'])
+on conflict (id) do nothing;
+drop policy if exists "community videos public read" on storage.objects;
+create policy "community videos public read" on storage.objects for select using (bucket_id = 'community-videos');
+drop policy if exists "community videos upload" on storage.objects;
+create policy "community videos upload" on storage.objects for insert to anon, authenticated with check (bucket_id = 'community-videos');
+drop policy if exists "community videos delete own upload" on storage.objects;
+create policy "community videos delete own upload" on storage.objects for delete to anon, authenticated using (bucket_id = 'community-videos');

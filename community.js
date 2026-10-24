@@ -511,3 +511,123 @@ setRecentStatus("MODO DEMO");
 renderRecentTracks();
 }
 })();
+// NEURAL COMMUNITY VIDEO UPLOAD: preview locally and publish to Supabase when configured.
+(() => {
+  const form = document.getElementById('videoUploadForm');
+  if (!form) return;
+  const input = document.getElementById('communityVideoFile');
+  const preview = document.getElementById('communityVideoPreview');
+  const info = document.getElementById('videoFileInfo');
+  const status = document.getElementById('videoUploadStatus');
+  const button = document.getElementById('publishVideoButton');
+  const videos = document.getElementById('communityVideos');
+  const cfg = window.NEURAL_COMMUNITY_CONFIG || {};
+  let previewUrl = null;
+  const MAX_VIDEO_MB = Number(cfg.maxVideoUploadMB) || 100;
+  const setStatus = (message, bad = false) => {
+    status.textContent = message;
+    status.style.color = bad ? '#ff6570' : 'var(--green)';
+  };
+  const sizeLabel = bytes => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  input.addEventListener('change', () => {
+    const file = input.files && input.files[0];
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = null;
+    preview.removeAttribute('src');
+    preview.hidden = true;
+    if (!file) {
+      info.textContent = 'ESPERANDO ARCHIVO DE VIDEO...';
+      return;
+    }
+    if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov)$/i.test(file.name)) {
+      input.value = '';
+      info.textContent = 'FORMATO NO VÁLIDO';
+      setStatus('Selecciona un video MP4, WebM o MOV.', true);
+      return;
+    }
+    if (file.size > MAX_VIDEO_MB * 1024 * 1024) {
+      input.value = '';
+      info.textContent = 'VIDEO DEMASIADO GRANDE';
+      setStatus(`El video supera el límite de ${MAX_VIDEO_MB} MB.`, true);
+      return;
+    }
+    previewUrl = URL.createObjectURL(file);
+    preview.src = previewUrl;
+    preview.hidden = false;
+    info.textContent = `${file.name} · ${sizeLabel(file.size)} · VIDEO LISTO`;
+    setStatus('Vista previa lista. Completa alias y título para publicar.');
+  });
+
+  function addVideoCard(title, artist, url) {
+    const card = document.createElement('article');
+    card.className = 'community-video-card';
+    const player = document.createElement('video');
+    player.src = url;
+    player.controls = true;
+    player.playsInline = true;
+    player.preload = 'metadata';
+    const heading = document.createElement('b');
+    heading.textContent = title;
+    const author = document.createElement('small');
+    author.textContent = `VIDEO · ${artist}`;
+    card.append(player, heading, author);
+    videos.prepend(card);
+  }
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const file = input.files && input.files[0];
+    const artist = document.getElementById('videoArtist').value.trim();
+    const title = document.getElementById('videoTitle').value.trim();
+    if (!file || !artist || !title) {
+      setStatus('Completa el alias, el título y selecciona un video.', true);
+      return;
+    }
+    if (!document.getElementById('videoRightsConfirm').checked) {
+      setStatus('Confirma que tienes derechos para compartir este video.', true);
+      return;
+    }
+    const ready = Boolean(window.supabase && cfg.supabaseUrl && cfg.supabaseAnonKey &&
+      cfg.supabaseUrl.startsWith('https://') && !cfg.supabaseUrl.includes('PEGA_AQUI') &&
+      !cfg.supabaseAnonKey.includes('PEGA_AQUI'));
+    if (!ready) {
+      setStatus('Vista previa disponible. Para que otros usuarios vean el video, configura Supabase y crea el bucket community-videos y la tabla video_posts.', true);
+      return;
+    }
+    button.disabled = true;
+    setStatus('SUBIENDO VIDEO // NO CIERRES ESTA PÁGINA...');
+    let path = null;
+    try {
+      const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+      const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      path = `${crypto.randomUUID()}-${cleanName}`;
+      const { error: uploadError } = await client.storage.from('community-videos').upload(path, file, {
+        contentType: file.type || 'video/mp4', upsert: false
+      });
+      if (uploadError) throw uploadError;
+      const { data: publicData } = client.storage.from('community-videos').getPublicUrl(path);
+      const { error: insertError } = await client.from('video_posts').insert({
+        artist, title, video_path: path, video_url: publicData.publicUrl, status: 'pending'
+      });
+      if (insertError) throw insertError;
+      addVideoCard(title, artist, publicData.publicUrl);
+      form.reset();
+      preview.hidden = true;
+      preview.removeAttribute('src');
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = null;
+      info.textContent = 'VIDEO ENVIADO · PENDIENTE DE MODERACIÓN';
+      setStatus('VIDEO RECIBIDO. Quedó pendiente de moderación antes de publicarse globalmente.');
+    } catch (error) {
+      console.error('Neural Community video upload:', error);
+      if (path) {
+        const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+        await client.storage.from('community-videos').remove([path]).catch(() => {});
+      }
+      setStatus(`ERROR AL SUBIR VIDEO: ${error.message || 'revisa la configuración de Supabase'}`, true);
+    } finally {
+      button.disabled = false;
+    }
+  });
+})();
+
