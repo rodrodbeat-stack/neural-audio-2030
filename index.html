@@ -293,9 +293,10 @@
 
     <label class="file-drop">ARCHIVO DE AUDIO
       <input id="uploadFile" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4" required>
-      <span>ARRASTRA O SELECCIONA MP3 / WAV / OGG / M4A</span>
-      <small id="fileHint">Tamaño máximo recomendado: 20 MB</small>
+      <span class="drop-icon">⇧</span><strong>ARRASTRA TU AUDIO AQUÍ</strong><small>o toca para explorar · MP3 / WAV / OGG / M4A</small><small id="fileHint">Tamaño máximo: 20 MB</small>
     </label>
+
+    <div class="audio-preview" id="audioPreview" hidden><div class="preview-head"><span>▰ AUDIO PREVIEW // READY</span><span id="previewDuration">00:00</span></div><div class="preview-wave" aria-hidden="true"></div><audio id="uploadPreviewPlayer" controls></audio></div>
 
     <div class="cover-upload">
   <label for="trackCover">🖼️ Portada del tema</label>
@@ -363,6 +364,7 @@
       <button class="small-button" id="refreshCommunity" type="button">↻ ACTUALIZAR</button>
     </div>
 
+    <div class="feed-tools"><input id="communitySearch" type="search" placeholder="⌕ Buscar artista o track..." aria-label="Buscar en la comunidad"><select id="communityGenre" aria-label="Filtrar género"><option value="">TODOS LOS GÉNEROS</option><option>Noise</option><option>Brutal Noise</option><option>Dark Ambient</option><option>Industrial</option><option>Cyberpunk</option><option>Dark Synth</option><option>Metal</option><option>Experimental</option></select></div>
     <div id="communityTracks" class="community-tracks">
       <article class="community-track demo-track">
         <div class="track-art">888</div>

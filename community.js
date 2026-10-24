@@ -498,3 +498,25 @@ setRecentStatus("MODO DEMO");
 renderRecentTracks();
 }
 })();
+
+// UX layer: drag/drop, local audio preview, feed search/filter and responsive likes.
+(() => {
+ const file=document.getElementById('uploadFile'), drop=file?.closest('.file-drop');
+ const preview=document.getElementById('audioPreview'), player=document.getElementById('uploadPreviewPlayer');
+ const duration=document.getElementById('previewDuration');
+ if(file&&drop){
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('dragover')}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('dragover')}));
+  drop.addEventListener('drop',e=>{const f=e.dataTransfer.files?.[0];if(f){try{file.files=e.dataTransfer.files}catch{};file.dispatchEvent(new Event('change',{bubbles:true}));}});
+  file.addEventListener('change',()=>{
+   const f=file.files?.[0]; if(!f)return;
+   if(player){player.src=URL.createObjectURL(f);preview.hidden=false;player.onloadedmetadata=()=>{const d=Math.floor(player.duration||0);duration.textContent=`${String(d/60|0).padStart(2,'0')}:${String(d%60).padStart(2,'0')}`}}
+   drop.querySelector('strong').textContent='✓ AUDIO CARGADO';
+  });
+ }
+ const search=document.getElementById('communitySearch'), genre=document.getElementById('communityGenre'), feed=document.getElementById('communityTracks');
+ function filter(){if(!feed)return;const q=(search?.value||'').toLowerCase(),g=genre?.value||'';feed.querySelectorAll('.community-track').forEach(card=>{const text=card.innerText.toLowerCase();card.hidden=!(text.includes(q)&&(!g||text.includes(g.toLowerCase())))});}
+ search?.addEventListener('input',filter);genre?.addEventListener('change',filter);
+ // Demo likes persist per browser/device; global likes require a Supabase RPC policy.
+ feed?.addEventListener('click',e=>{const b=e.target.closest('.like-button');if(!b)return;const id=b.dataset.id,key='neural-liked-'+id,liked=localStorage.getItem(key)==='1';localStorage.setItem(key,liked?'0':'1');b.classList.toggle('liked',!liked);const count=Number((b.textContent.match(/\d+/)||[0])[0])||0;b.textContent=`${!liked?'♥':'♡'} ${Math.max(0,count+(liked?-1:1))} ME GUSTA`;});
+})();
