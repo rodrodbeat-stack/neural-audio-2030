@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -9,17 +10,23 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="scanlines" aria-hidden="true"></div>
-  <header class="topbar">
+  <div class="scanlines" aria-hidden="true"></div>  <header class="topbar">
     <a class="brand" href="#inicio" aria-label="888 Digital Factory">
-      <span class="brand-888">888</span><span class="brand-name">DIGITALFACTORY</span>
+      <span class="brand-888">888</span>
+      <span class="brand-name">DIGITALFACTORY</span>
       <small>PRODUCTORA DE AUDIO</small>
-    </a>
-    <div class="neural-mark"><span class="pulse-icon">〰</span><span>NEURAL AUDIO <b>2050</b></span></div>
-    <div class="system"><i></i><span>SYSTEM ONLINE</span><time id="clock">--:--:--</time></div>
-  </header>
+    </a><div class="neural-mark">
+  <span class="pulse-icon">〰</span>
+  <span>NEURAL AUDIO <b>2050</b></span>
+</div>
 
-  <div class="layout">
+<div class="system">
+  <i></i>
+  <span>SYSTEM ONLINE</span>
+  <time id="clock">--:--:--</time>
+</div>
+
+  </header>  <div class="layout">
     <aside class="sidebar">
       <nav class="nav">
         <a class="nav-link active" href="#inicio">⌂ <span>INICIO</span></a>
@@ -30,146 +37,366 @@
         <a class="nav-link" href="#forge">⚙ <span>GENERADOR</span></a>
         <a class="nav-link" href="#community">⬆ <span>COMMUNITY UPLOAD</span></a>
         <a class="nav-link" href="#terminal">⚙ <span>CONFIGURACIÓN</span></a>
-      </nav>
-      <div class="genre-box">
-        <h3>GÉNEROS</h3>
-        <a href="#albumes">⚙ <span>DARK SYNTH</span></a>
-        <a href="#albumes">⚙ <span>INDUSTRIAL</span></a>
-        <a href="#albumes">♧ <span>CYBERPUNK</span></a>
-        <a href="#albumes">◉ <span>DARK TECHNO</span></a>
-        <a href="#albumes">✥ <span>BIOMECHANICAL</span></a>
-        <a href="#albumes">♧ <span>AMBIENT</span></a>
-        <a href="#albumes">✣ <span>TRANCE</span></a>
-        <a href="#albumes">✥ <span>METAL</span></a>
-      </div>
-      <div class="weapon-card"><div class="skull">☠</div><b>MUSIC IS A<br>WEAPON</b><small>888 DIGITAL FACTORY</small></div>
-    </aside>
-
-    <main class="main-content" id="inicio">
-      <section class="hero" aria-label="888 Digital Factory audio studio">
-        <div class="hero-copy">
-          <p class="eyebrow">888 DIGITAL FACTORY // AUDIO SYSTEM</p>
-          <h1>NEURAL AUDIO <span>2050</span></h1>
-          <p>MÚSICA PARA UN MUNDO SIN LÍMITES</p>
-          <button class="btn-primary" id="heroPlay">▶ &nbsp; INITIALIZE AUDIO</button>
-        </div>
-        <div class="hero-caption"><strong>AUDIO<br>BRUTAL-NOISE</strong><span>SONIDO · MEZCLA · MASTERING</span></div>
-      </section>
-
-      <section class="album-section panel" id="albumes">
-        <div class="section-heading"><h2><span>✹</span> ÁLBUMES DESTACADOS</h2><a href="#tracks">VER TRACKS ↗</a></div>
-        <div class="album-grid">
-          <button class="album-card selected" data-track="0"><img src="assets/neural-audio-hero.png" alt=""><span class="album-title">NEURAL DRIFT</span><small>Cyber Heart · DARK SYNTH</small><b>U-001 <em>▶</em></b></button>
-          <button class="album-card" data-track="1"><img src="assets/neural-audio-hero.png" alt=""><span class="album-title">VOID STRUCTURE</span><small>Digital Collapse · INDUSTRIAL</small><b>U-002 <em>▶</em></b></button>
-          <button class="album-card" data-track="2"><img src="assets/neural-audio-hero.png" alt=""><span class="album-title">SYNTHETIC SOULS</span><small>Last Transmission · CYBERPUNK</small><b>U-003 <em>▶</em></b></button>
-          <button class="album-card" data-track="3"><img src="assets/neural-audio-hero.png" alt=""><span class="album-title">THE MACHINE</span><small>Industrial Pulse · TECHNO</small><b>U-004 <em>▶</em></b></button>
-          <button class="album-card" data-track="4"><img src="assets/neural-audio-hero.png" alt=""><span class="album-title">BIOMECHANIC</span><small>Human Error · BIOMECHANICAL</small><b>U-005 <em>▶</em></b></button>
-        </div>
-      </section>
-
-      <div class="lower-grid">
-        <section class="panel tracks-panel" id="tracks">
-          <div class="section-heading"><h2><span>✹</span> ÚLTIMAS CANCIONES</h2><span class="muted">LOCAL AUDIO</span></div>
-          <div class="track-table" id="trackTable">
-            <div class="track-row track-head"><span>#</span><span>TÍTULO</span><span>ARTISTA</span><span>GÉNERO</span><span>DURACIÓN</span></div>
-            <button class="track-row" data-track="0"><span>▶ 1</span><span>Cyber Heart</span><span>Neural Drift</span><span>Dark Synth</span><span>00:32</span></button>
-            <button class="track-row" data-track="1"><span>▶ 2</span><span>Digital Collapse</span><span>Void Structure</span><span>Industrial</span><span>00:32</span></button>
-            <button class="track-row" data-track="2"><span>▶ 3</span><span>Last Transmission</span><span>Synthetic Souls</span><span>Cyberpunk</span><span>00:32</span></button>
-            <button class="track-row" data-track="3"><span>▶ 4</span><span>Industrial Pulse</span><span>The Machine</span><span>Techno</span><span>00:32</span></button>
-            <button class="track-row" data-track="4"><span>▶ 5</span><span>Human Error</span><span>Biomechanic</span><span>Dark Ambient</span><span>00:32</span></button>
-          </div>
-        </section>
-
-        <section class="panel forge-panel" id="forge">
-          <div class="section-heading"><h2><span>✹</span> FORGE YOUR SOUND</h2></div>
-          <p class="muted">Crea tu experiencia musical personalizada.</p>
-          <label>GÉNERO<select id="genre"><option>Cyberpunk</option><option>Dark Synth</option><option>Industrial</option><option>Dark Ambient</option><option>Dark Techno</option></select></label>
-          <label>BPM<select id="bpm"><option>120 - 160</option><option>80 - 110</option><option>160 - 190</option></select></label>
-          <label>INTENSIDAD<select id="intensity"><option>Media</option><option>Alta</option><option>Extrema</option><option>Atmosférica</option></select></label>
-          <label>AMBIENTE<select id="ambience"><option>Urbano / Nocturno</option><option>Industrial / Ruinas</option><option>Espacial / Frío</option><option>Apocalíptico</option></select></label>
-          <button class="btn-primary full" id="generate">〰 &nbsp; GENERAR PLAYLIST</button>
-          <p class="generator-result" id="generatorResult" aria-live="polite">SISTEMA LISTO // Selecciona tu sonido.</p>
-        </section>
-      </div>
-    </main>
-
-    <aside class="right-rail">
-      <section class="panel player-panel" id="reproductor">
-        <div class="section-heading"><h2><span>‹</span> REPRODUCIENDO AHORA</h2><span class="dots">◆ ◆</span></div>
-        <div class="now-playing">
-          <img src="assets/neural-audio-hero.png" alt="Arte de Neural Audio">
-          <div><h3 id="nowTitle">Cyber Heart</h3><p id="nowArtist">Neural Drift</p><small id="nowGenre">DARK SYNTH</small></div>
-        </div>
-        <div class="progress-wrap"><input type="range" id="seek" min="0" max="100" value="0" aria-label="Posición de la canción"><div class="time-row"><span id="elapsed">00:00</span><span id="duration">00:32</span></div></div>
-        <div class="controls"><button id="shuffle" aria-label="Aleatorio">⤨</button><button id="previous" aria-label="Anterior">|◀</button><button id="playPause" class="play-button" aria-label="Reproducir">▶</button><button id="next" aria-label="Siguiente">▶|</button><button id="mute" aria-label="Silenciar">◖))</button></div>
-        <label class="volume-label">VOLUMEN <input type="range" id="volume" min="0" max="1" step=".01" value=".72"></label>
-        <audio id="audio" preload="metadata" src="music/neural-drift-demo.wav"></audio>
-      </section>
-
-      <section class="panel playlist-panel" id="playlist">
-        <div class="section-heading"><h2>♧ PLAYLIST NEURAL</h2><span class="dots">◆ ◆</span></div><p class="muted">REPRODUCCIÓN CONTINUA</p>
-        <div class="queue" id="queue">
-          <button class="queue-item active" data-track="0"><span class="mini-cover">◉</span><span><b>Cyber Heart</b><small>Neural Drift</small></span><time>00:32</time><i>Ⅱ</i></button>
-          <button class="queue-item" data-track="1"><span class="mini-cover">◈</span><span><b>Digital Collapse</b><small>Void Structure</small></span><time>00:32</time><i>⋮</i></button>
-          <button class="queue-item" data-track="2"><span class="mini-cover">◉</span><span><b>Last Transmission</b><small>Synthetic Souls</small></span><time>00:32</time><i>⋮</i></button>
-          <button class="queue-item" data-track="3"><span class="mini-cover">▥</span><span><b>Industrial Pulse</b><small>The Machine</small></span><time>00:32</time><i>⋮</i></button>
-          <button class="queue-item" data-track="4"><span class="mini-cover">◉</span><span><b>Human Error</b><small>Biomechanic</small></span><time>00:32</time><i>⋮</i></button>
-        </div>
-      </section>
-
-      <section class="panel terminal-panel" id="terminal">
-        <div class="section-heading"><h2>◉ CYBER TERMINAL</h2></div><p class="muted">LOGS DEL SISTEMA</p>
-        <div class="terminal" id="terminalLogs"><p>T-00:01:22 &nbsp; AUDIO CORE INITIALIZED</p><p>T-00:01:27 &nbsp; TRACK LOADED: Cyber Heart</p><p>T-00:03:14 &nbsp; NEURAL SIGNAL DETECTED</p><p>T-00:03:15 &nbsp; EQUALIZER OPTIMIZED</p><p>T-00:04:02 &nbsp; PLAYLIST UPDATED</p><p>T-00:04:18 &nbsp; USER ACTIVITY: LISTENING</p><p>T-00:04:32 &nbsp; VOLUME: 72%</p><p>T-00:05:01 &nbsp; SYSTEM STABLE</p></div>
-        <div class="terminal-status">› &nbsp; NEURAL AUDIO 2050 // ONLINE</div>
-      </section>
-    </aside>
+      </nav>  <div class="genre-box">
+    <h3>GÉNEROS</h3>
+    <a href="#albumes">⚙ <span>DARK SYNTH</span></a>
+    <a href="#albumes">⚙ <span>INDUSTRIAL</span></a>
+    <a href="#albumes">♧ <span>CYBERPUNK</span></a>
+    <a href="#albumes">◉ <span>DARK TECHNO</span></a>
+    <a href="#albumes">✥ <span>BIOMECHANICAL</span></a>
+    <a href="#albumes">♧ <span>AMBIENT</span></a>
+    <a href="#albumes">✣ <span>TRANCE</span></a>
+    <a href="#albumes">✥ <span>METAL</span></a>
   </div>
 
-      <section class="panel community-panel" id="community">
-        <div class="section-heading">
-          <h2><span>✹</span> NEURAL COMMUNITY // AUDIO UPLOAD</h2>
-          <span class="community-live"><i></i> COMMUNITY NODE</span>
+  <div class="weapon-card">
+    <div class="skull">☠</div>
+    <b>MUSIC IS A<br>WEAPON</b>
+    <small>888 DIGITAL FACTORY</small>
+  </div>
+</aside>
+
+<main class="main-content" id="inicio">
+  <section class="hero" aria-label="888 Digital Factory audio studio">
+    <div class="hero-copy">
+      <p class="eyebrow">888 DIGITAL FACTORY // AUDIO SYSTEM</p>
+      <h1>NEURAL AUDIO <span>2050</span></h1>
+      <p>MÚSICA PARA UN MUNDO SIN LÍMITES</p>
+      <button class="btn-primary" id="heroPlay">▶ &nbsp; INITIALIZE AUDIO</button>
+    </div>
+    <div class="hero-caption">
+      <strong>AUDIO<br>BRUTAL-NOISE</strong>
+      <span>SONIDO · MEZCLA · MASTERING</span>
+    </div>
+  </section>
+
+  <section class="album-section panel" id="albumes">
+    <div class="section-heading">
+      <h2><span>✹</span> ÁLBUMES DESTACADOS</h2>
+      <a href="#tracks">VER TRACKS ↗</a>
+    </div>
+
+    <div class="album-grid">
+      <button class="album-card selected" data-track="5">
+        <img src="assets/Screenshot_20261001_230106.jpg" alt="">
+        <span class="album-title">NEURAL DRIFT</span>
+        <small>Cyber Heart · DARK SYNTH</small>
+        <b>U-001 <em>▶</em></b>
+      </button>
+
+      <button class="album-card" data-track="5">
+        <img src="assets/Screenshot_20261013_191726_com.android.chrome.jpg" alt="">
+        <span class="album-title">VOID STRUCTURE</span>
+        <small>Digital Collapse · INDUSTRIAL</small>
+        <b>U-002 <em>▶</em></b>
+      </button>
+
+      <button class="album-card" data-track="3">
+        <img src="assets/Screenshot_20261013_191450_com.android.chrome.jpg" alt="">
+        <span class="album-title">SYNTHETIC SOULS</span>
+        <small>Last Transmission · CYBERPUNK</small>
+        <b>U-003 <em>▶</em></b>
+      </button>
+
+      <button class="album-card" data-track="3">
+        <img src="assets/Screenshot_20261001_230138.jpg" alt="">
+        <span class="album-title">THE MACHINE</span>
+        <small>Industrial Pulse · TECHNO</small>
+        <b>U-004 <em>▶</em></b>
+      </button>
+
+      <button class="album-card" data-track="4">
+        <img src="assets/Cyborg_With_Red_Eye-cambia-el-texto-terminator-por-888-digital-factory.jpg" alt="">
+        <span class="album-title">BIOMECHANIC</span>
+        <small>Human Error · BIOMECHANICAL</small>
+        <b>U-005 <em>▶</em></b>
+      </button>
+    </div>
+  </section>
+
+  <div class="lower-grid">
+    <section class="panel tracks-panel" id="tracks">
+      <div class="section-heading">
+        <h2><span>✹</span> ÚLTIMAS CANCIONES</h2>
+        <span class="muted" id="recentStatus">CARGANDO CATÁLOGO</span>
+      </div>
+
+      <div class="track-table" id="trackTable">
+        <div class="track-row track-head">
+          <span>#</span>
+          <span>TÍTULO</span>
+          <span>ARTISTA</span>
+          <span>GÉNERO</span>
+          <span>DURACIÓN</span>
         </div>
-        <p class="community-intro">Publica tus producciones, descubre artistas independientes y comparte ruido desde cualquier lugar.</p>
 
-        <div class="community-grid">
-          <form class="upload-form" id="uploadForm">
-            <h3>⬆ TRANSMITIR NUEVO AUDIO</h3>
-            <label>ARTISTA / ALIAS<input id="uploadArtist" name="artist" maxlength="60" required placeholder="Tu alias artístico"></label>
-            <label>TÍTULO DEL TRACK<input id="uploadTitle" name="title" maxlength="100" required placeholder="Nombre de la producción"></label>
-            <label>GÉNERO<select id="uploadGenre" name="genre"><option>Noise</option><option>Brutal Noise</option><option>Dark Ambient</option><option>Industrial</option><option>Cyberpunk</option><option>Dark Synth</option><option>Metal</option><option>Experimental</option><option>Otro</option></select></label>
-            <label>DESCRIPCIÓN<textarea id="uploadDescription" name="description" maxlength="500" rows="3" placeholder="Describe el sonido, equipo o concepto..."></textarea></label>
-            <label class="file-drop">ARCHIVO DE AUDIO
-              <input id="uploadFile" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4" required>
-              <span>ARRASTRA O SELECCIONA MP3 / WAV / OGG / M4A</span>
-              <small id="fileHint">Tamaño máximo recomendado: 20 MB</small>
-            </label>
-            <label class="rights-check"><input type="checkbox" id="rightsConfirm" required> Confirmo que tengo derechos para compartir este audio.</label>
-            <button class="btn-primary full" type="submit">⬆ PUBLICAR EN NEURAL COMMUNITY</button>
-            <p class="community-status" id="uploadStatus" aria-live="polite">CONECTA EL SERVICIO PARA PUBLICAR GLOBALMENTE.</p>
-          </form>
-
-          <div class="community-feed">
-            <div class="feed-heading"><div><h3>◉ TRANSMISIONES DE LA COMUNIDAD</h3><p class="muted">NUEVOS SONIDOS // INDEPENDIENTES</p></div>
-              <button class="small-button" id="refreshCommunity" type="button">↻ ACTUALIZAR</button>
-            </div>
-            <div id="communityTracks" class="community-tracks">
-              <article class="community-track demo-track">
-                <div class="track-art">888</div><div class="community-track-info"><b>Brutal Noise Transmission</b><span>888 Digital Factory · DEMO</span><small>BRUTAL NOISE / EXPERIMENTAL</small></div>
-                <audio controls preload="none" src="music/neural-drift-demo.wav"></audio>
-                <div class="community-actions"><button type="button" disabled>♡ 0</button><span>Audio de demostración</span></div>
-              </article>
-              <div class="community-empty" id="communityEmpty">Las publicaciones reales aparecerán aquí cuando configures la conexión comunitaria.</div>
-            </div>
-            <div class="community-note"><b>COMMUNITY PROTOCOL</b><span>Los audios reales se guardan en almacenamiento externo, no en GitHub Pages. Los archivos enviados pueden quedar pendientes de moderación.</span></div>
-          </div>
+        <!-- Las canciones recientes se insertan aquí mediante app.js -->
+        <div id="recentCommunityTracks">
+          <p class="muted">INICIALIZANDO CATÁLOGO NEURAL...</p>
         </div>
-      </section>
+      </div>
+    </section>
 
-  <footer class="footer"><span>NEURAL AUDIO 2050 &nbsp; // &nbsp; STREAMING THE FUTURE</span><div class="waveform" aria-hidden="true"></div><span>888 DIGITAL FACTORY &nbsp; | &nbsp; PRIVACY &nbsp; | &nbsp; CONTACTO</span></footer>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="community-config.js"></script>
-  <script src="community.js"></script>
-  <script src="app.js"></script>
+    <section class="panel forge-panel" id="forge">
+      <div class="section-heading">
+        <h2><span>✹</span> FORGE YOUR SOUND</h2>
+      </div>
+
+      <p class="muted">Crea tu experiencia musical personalizada.</p>
+
+      <label>GÉNERO
+        <select id="genre">
+          <option>Cyberpunk</option>
+          <option>Dark Synth</option>
+          <option>Industrial</option>
+          <option>Dark Ambient</option>
+          <option>Dark Techno</option>
+        </select>
+      </label>
+
+      <label>BPM
+        <select id="bpm">
+          <option>120 - 160</option>
+          <option>80 - 110</option>
+          <option>160 - 190</option>
+        </select>
+      </label>
+
+      <label>INTENSIDAD
+        <select id="intensity">
+          <option>Media</option>
+          <option>Alta</option>
+          <option>Extrema</option>
+          <option>Atmosférica</option>
+        </select>
+      </label>
+
+      <label>AMBIENTE
+        <select id="ambience">
+          <option>Urbano / Nocturno</option>
+          <option>Industrial / Ruinas</option>
+          <option>Espacial / Frío</option>
+          <option>Apocalíptico</option>
+        </select>
+      </label>
+
+      <button class="btn-primary full" id="generate">〰 &nbsp; GENERAR PLAYLIST</button>
+      <p class="generator-result" id="generatorResult" aria-live="polite">SISTEMA LISTO // Selecciona tu sonido.</p>
+    </section>
+  </div>
+</main>
+
+<aside class="right-rail">
+  <section class="panel player-panel" id="reproductor">
+    <div class="section-heading">
+      <h2><span>‹</span> REPRODUCIENDO AHORA</h2>
+      <span class="dots">◆ ◆</span>
+    </div>
+
+    <div class="now-playing">
+      <img src="assets/neural-audio-hero.png" alt="Arte de Neural Audio">
+      <div>
+        <h3 id="nowTitle">Cyber Heart</h3>
+        <p id="nowArtist">Neural Drift</p>
+        <small id="nowGenre">DARK SYNTH</small>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <input type="range" id="seek" min="0" max="100" value="0" aria-label="Posición de la canción">
+      <div class="time-row">
+        <span id="elapsed">00:00</span>
+        <span id="duration">00:32</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="shuffle" aria-label="Aleatorio">⤨</button>
+      <button id="previous" aria-label="Anterior">|◀</button>
+      <button id="playPause" class="play-button" aria-label="Reproducir">▶</button>
+      <button id="next" aria-label="Siguiente">▶|</button>
+      <button id="mute" aria-label="Silenciar">◖))</button>
+    </div>
+
+    <label class="volume-label">
+      VOLUMEN
+      <input type="range" id="volume" min="0" max="1" step=".01" value=".72">
+    </label>
+
+    <audio id="audio" preload="metadata" src="music/neural-drift-demo.wav"></audio>
+  </section>
+
+  <section class="panel playlist-panel" id="playlist">
+    <div class="section-heading">
+      <h2>♧ PLAYLIST NEURAL</h2>
+      <span class="dots">◆ ◆</span>
+    </div>
+
+    <p class="muted">REPRODUCCIÓN CONTINUA</p>
+    <div class="queue" id="queue"></div>
+  </section>
+
+  <section class="panel terminal-panel" id="terminal">
+    <div class="section-heading">
+      <h2>◉ CYBER TERMINAL</h2>
+    </div>
+    <p class="muted">LOGS DEL SISTEMA</p>
+    <div class="terminal" id="terminalLogs">
+      <p>T-00:01:22 &nbsp; AUDIO CORE INITIALIZED</p>
+      <p>T-00:01:27 &nbsp; TRACK LOADED: Cyber Heart</p>
+      <p>T-00:03:14 &nbsp; NEURAL SIGNAL DETECTED</p>
+      <p>T-00:03:15 &nbsp; EQUALIZER OPTIMIZED</p>
+      <p>T-00:04:02 &nbsp; PLAYLIST UPDATED</p>
+      <p>T-00:04:18 &nbsp; USER ACTIVITY: LISTENING</p>
+      <p>T-00:04:32 &nbsp; VOLUME: 72%</p>
+      <p>T-00:05:01 &nbsp; SYSTEM STABLE</p>
+    </div>
+    <div class="terminal-status">› &nbsp; NEURAL AUDIO 2050 // ONLINE</div>
+  </section>
+</aside>
+
+  </div>  <section class="panel community-panel" id="community">
+    <div class="section-heading">
+      <h2><span>✹</span> NEURAL COMMUNITY // AUDIO UPLOAD</h2>
+      <span class="community-live"><i></i> COMMUNITY NODE</span>
+    </div><p class="community-intro">Publica tus producciones, descubre artistas independientes y comparte ruido desde cualquier lugar.</p>
+
+<div class="community-grid">
+  <form class="upload-form" id="uploadForm">
+    <h3>⬆ TRANSMITIR NUEVO AUDIO</h3>
+
+    <label>ARTISTA / ALIAS
+      <input id="uploadArtist" name="artist" maxlength="60" required placeholder="Tu alias artístico">
+    </label>
+
+    <label>TÍTULO DEL TRACK
+      <input id="uploadTitle" name="title" maxlength="100" required placeholder="Nombre de la producción">
+    </label>
+
+    <label>GÉNERO
+      <select id="uploadGenre" name="genre">
+        <option>Noise</option>
+        <option>Brutal Noise</option>
+        <option>Dark Ambient</option>
+        <option>Industrial</option>
+        <option>Cyberpunk</option>
+        <option>Dark Synth</option>
+        <option>Metal</option>
+        <option>Experimental</option>
+        <option>Otro</option>
+      </select>
+    </label>
+
+    <label>DESCRIPCIÓN
+      <textarea id="uploadDescription" name="description" maxlength="500" rows="3" placeholder="Describe el sonido, equipo o concepto..."></textarea>
+    </label>
+
+    <label class="file-drop">ARCHIVO DE AUDIO
+      <input id="uploadFile" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4" required>
+      <span>ARRASTRA O SELECCIONA MP3 / WAV / OGG / M4A</span>
+      <small id="fileHint">Tamaño máximo recomendado: 20 MB</small>
+    </label>
+
+    <div class="cover-upload">
+  <label for="trackCover">🖼️ Portada del tema</label>
+
+  <input
+    type="file"
+    id="trackCover"
+    accept="image/jpeg,image/png,image/webp"
+  >
+
+  <img
+    id="coverPreview"
+    alt="Vista previa de la portada"
+    hidden
+    style="width:140px;height:140px;object-fit:cover;border-radius:12px;margin-top:12px;"
+  >
+</div>
+
+<script>
+  const coverInput = document.getElementById("trackCover");
+  const coverPreview = document.getElementById("coverPreview");
+
+  coverInput.addEventListener("change", () => {
+    const file = coverInput.files[0];
+
+    if (!file) {
+      coverPreview.hidden = true;
+      return;
+    }
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      alert("Selecciona una imagen JPG, PNG o WebP.");
+      coverInput.value = "";
+      coverPreview.hidden = true;
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("La imagen debe pesar menos de 5 MB.");
+      coverInput.value = "";
+      coverPreview.hidden = true;
+      return;
+    }
+
+    coverPreview.src = URL.createObjectURL(file);
+    coverPreview.hidden = false;
+  });
+</script>
+
+    <label class="rights-check">
+      <input type="checkbox" id="rightsConfirm" required>
+      Confirmo que tengo derechos para compartir este audio.
+    </label>
+
+    <button class="btn-primary full" type="submit">⬆ PUBLICAR EN NEURAL COMMUNITY</button>
+    <p class="community-status" id="uploadStatus" aria-live="polite">CONECTA EL SERVICIO PARA PUBLICAR GLOBALMENTE.</p>
+  </form>
+
+  <div class="community-feed">
+    <div class="feed-heading">
+      <div>
+        <h3>◉ TRANSMISIONES DE LA COMUNIDAD</h3>
+        <p class="muted">NUEVOS SONIDOS // INDEPENDIENTES</p>
+      </div>
+      <button class="small-button" id="refreshCommunity" type="button">↻ ACTUALIZAR</button>
+    </div>
+
+    <div id="communityTracks" class="community-tracks">
+      <article class="community-track demo-track">
+        <div class="track-art">888</div>
+        <div class="community-track-info">
+          <b>Brutal Noise Transmission</b>
+          <span>888 Digital Factory · DEMO</span>
+          <small>BRUTAL NOISE / EXPERIMENTAL</small>
+        </div>
+        <audio controls preload="none" src="music/bios-punk_.mp3"></audio>
+        <div class="community-actions">
+          <button type="button" disabled>♡ 0</button>
+          <span>Audio de demostración</span>
+        </div>
+      </article>
+
+      <div class="community-empty" id="communityEmpty">Las publicaciones reales aparecerán aquí cuando configures la conexión comunitaria.</div>
+    </div>
+
+    <div class="community-note">
+      <b>COMMUNITY PROTOCOL</b>
+      <span>Los audios reales se guardan en almacenamiento externo, no en GitHub Pages. Los archivos enviados pueden quedar pendientes de moderación.</span>
+    </div>
+  </div>
+</div>
+
+  </section>  <footer class="footer">
+    <span>NEURAL AUDIO 2050 &nbsp; // &nbsp; STREAMING THE FUTURE</span>
+    <div class="waveform" aria-hidden="true"></div>
+    <span>888 DIGITAL FACTORY &nbsp; | &nbsp; PRIVACY &nbsp; | &nbsp; CONTACTO</span>
+  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="community-config.js"></script>
+<script src="app.js"></script>
+<script src="community.js"></script>
 </body>
 </html>
+

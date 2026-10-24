@@ -1,124 +1,513 @@
 (() => {
-  const cfg = window.NEURAL_COMMUNITY_CONFIG || {};
-  const status = document.getElementById("uploadStatus");
-  const form = document.getElementById("uploadForm");
-  const fileInput = document.getElementById("uploadFile");
-  const fileHint = document.getElementById("fileHint");
-  const list = document.getElementById("communityTracks");
-  const empty = document.getElementById("communityEmpty");
-  const ready = window.supabase && cfg.supabaseUrl && cfg.supabaseAnonKey &&
-    cfg.supabaseUrl.startsWith("https://") &&
-    !cfg.supabaseUrl.includes("PEGA_AQUI") &&
-    !cfg.supabaseAnonKey.includes("PEGA_AQUI");
-  let client = null;
+"use strict";
 
-  const say = (message, error = false) => {
-    status.textContent = message;
-    status.style.color = error ? "#ff6570" : "var(--green)";
-  };
-  const safe = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+const cfg = window.NEURAL_COMMUNITY_CONFIG || {};
+
+const status = document.getElementById("uploadStatus");
+const form = document.getElementById("uploadForm");
+const fileInput = document.getElementById("uploadFile");
+const fileHint = document.getElementById("fileHint");
+const list = document.getElementById("communityTracks");
+const empty = document.getElementById("communityEmpty");
+const recentList = document.getElementById("recentCommunityTracks");
+const recentStatus = document.getElementById("recentStatus");
+const refreshButton = document.getElementById("refreshCommunity");
+
+const ready = Boolean(
+window.supabase &&
+cfg.supabaseUrl &&
+cfg.supabaseAnonKey &&
+cfg.supabaseUrl.startsWith("https://") &&
+!cfg.supabaseUrl.includes("PEGA_AQUI") &&
+!cfg.supabaseAnonKey.includes("PEGA_AQUI")
+);
+
+let client = null;
+let publishedTracks = [];
+let recentInitialized = false;
+
+const say = (message, error = false) => {
+if (!status) return;
+status.textContent = message;
+status.style.color = error ? "#ff6570" : "var(--green)";
+};
+
+  const safe = value =>
+  String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
   }[ch]));
-  const formatDate = value => value ? new Date(value).toLocaleDateString("es-CL") : "NUEVO";
 
-  if (ready) {
-    client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
-    say("SUPABASE CONFIGURADO // CARGANDO COMUNIDAD.");
-    loadTracks();
-  } else {
-    say("MODO DEMO // Falta configurar Supabase para habilitar publicaciones globales.");
-  }
+const formatDate = value => {
+if (!value) return "NUEVO";
 
-  fileInput.addEventListener("change", () => {
-    const file = fileInput.files?.[0];
-    if (!file) { fileHint.textContent = "Tamaño máximo recomendado: 20 MB"; return; }
-    fileHint.textContent = `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB`;
-    if (file.size > (Number(cfg.maxUploadMB) || 20) * 1024 * 1024) {
-      say(`El archivo supera el límite de ${Number(cfg.maxUploadMB) || 20} MB.`, true);
-    }
-  });
+const date = new Date(value);
 
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
-    if (!client) {
-      say("Para publicar a todos, primero configura Supabase siguiendo SETUP-SUPABASE.md.", true);
+return Number.isNaN(date.getTime())
+  ? "NUEVO"
+  : date.toLocaleDateString("es-CL");
+
+};
+
+const formatDuration = seconds => {
+if (!Number.isFinite(Number(seconds)) || Number(seconds) <= 0) {
+return "—:—";
+}
+
+const value = Math.floor(Number(seconds));
+
+return `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
+
+};
+
+function setRecentStatus(message) {
+if (recentStatus) {
+recentStatus.textContent = message;
+}
+}
+
+function renderRecentTracks() {
+if (!recentList) return;
+
+recentList.replaceChildren();
+
+if (!publishedTracks.length) {
+  const message = document.createElement("p");
+  message.className = "muted";
+  message.textContent = ready
+    ? "NO HAY CANCIONES PUBLICADAS TODAVÍA."
+    : "ESPERANDO CONEXIÓN CON SUPABASE.";
+  recentList.appendChild(message);
+  return;
+}
+
+publishedTracks.forEach((track, index) => {
+  const row = document.createElement("button");
+
+  row.type = "button";
+  row.className = "track-row community-recent-row";
+  row.setAttribute("aria-label", `Reproducir ${track.title} de ${track.artist}`);
+
+  const number = document.createElement("span");
+  number.textContent = `▶ ${index + 1}`;
+
+  const title = document.createElement("span");
+  title.textContent = track.title || "Sin título";
+
+  const artist = document.createElement("span");
+  artist.textContent = track.artist || "Artista independiente";
+
+  const genre = document.createElement("span");
+  genre.textContent = track.genre || "COMMUNITY";
+
+  const duration = document.createElement("span");
+  duration.textContent = formatDuration(track.duration_seconds);
+
+  row.append(number, title, artist, genre, duration);
+
+  row.addEventListener("click", () => {
+    if (typeof window.addCommunityTrack !== "function") {
+      say("El reproductor central todavía no está listo.", true);
       return;
     }
-    const file = fileInput.files?.[0];
-    const maxBytes = (Number(cfg.maxUploadMB) || 20) * 1024 * 1024;
-    const allowed = /\.(mp3|wav|ogg|m4a)$/i.test(file?.name || "");
-    if (!file || !allowed) return say("Formato no válido. Usa MP3, WAV, OGG o M4A.", true);
-    if (file.size > maxBytes) return say(`Archivo demasiado grande. Máximo ${Number(cfg.maxUploadMB) || 20} MB.`, true);
 
-    const artist = document.getElementById("uploadArtist").value.trim();
-    const title = document.getElementById("uploadTitle").value.trim();
-    const genre = document.getElementById("uploadGenre").value;
-    const description = document.getElementById("uploadDescription").value.trim();
-    const submit = form.querySelector('button[type="submit"]');
-    submit.disabled = true;
-    say("SUBIENDO AUDIO // ESPERA...");
-    try {
-      // Demo community upload is anonymous and queued for moderation. RLS + bucket policies apply.
-      const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const objectPath = `${crypto.randomUUID()}-${cleanName}`;
-      const { error: uploadError } = await client.storage.from("community-audio")
-        .upload(objectPath, file, { contentType: file.type || "application/octet-stream", upsert: false });
-      if (uploadError) throw uploadError;
+    const indexInPlaylist = window.addCommunityTrack({
+      id: track.id,
+      title: track.title,
+      artist: track.artist,
+      genre: track.genre,
+      src: track.audio_url,
+      duration: track.duration_seconds
+    });
 
-      const { data: publicData } = client.storage.from("community-audio").getPublicUrl(objectPath);
-      const { error: insertError } = await client.from("tracks").insert({
-        artist, title, genre, description,
-        audio_path: objectPath,
-        audio_url: publicData.publicUrl,
-        status: "pending"
-      });
-      if (insertError) {
-        await client.storage.from("community-audio").remove([objectPath]);
-        throw insertError;
+    if (indexInPlaylist >= 0) {
+      const queueButtons = document.querySelectorAll("#queue .queue-item");
+      const queueButton = queueButtons[indexInPlaylist];
+
+      if (queueButton) {
+        queueButton.click();
+      } else {
+        say("Canción añadida. Revisa la playlist central.");
       }
-      form.reset();
-      fileHint.textContent = "Tamaño máximo recomendado: 20 MB";
-      say("AUDIO RECIBIDO // EN REVISIÓN. Se publicará después de la moderación.");
-      await loadTracks();
-    } catch (err) {
-      say(`ERROR DE PUBLICACIÓN: ${err.message || "revisa configuración y políticas de Supabase"}`, true);
-    } finally {
-      submit.disabled = false;
     }
   });
 
-  async function loadTracks() {
-    if (!client) return;
-    try {
-      const { data, error } = await client.from("tracks")
-        .select("id,artist,title,genre,description,audio_url,created_at,likes_count")
-        .eq("status", "published").order("created_at", { ascending: false }).limit(30);
-      if (error) throw error;
-      list.querySelectorAll(".remote-track").forEach(el => el.remove());
-      if (empty) empty.hidden = data.length > 0;
-      data.forEach(track => {
-        const card = document.createElement("article");
-        card.className = "community-track remote-track";
-        card.innerHTML = `
-          <div class="track-art">888</div>
-          <div class="community-track-info">
-            <b>${safe(track.title)}</b><span>${safe(track.artist)} · ${safe(formatDate(track.created_at))}</span>
-            <small>${safe(track.genre)}${track.description ? " · " + safe(track.description) : ""}</small>
-          </div>
-          <audio controls preload="none" src="${safe(track.audio_url)}"></audio>
-          <div class="community-actions"><button type="button" class="like-button" data-id="${safe(track.id)}">♡ ${Number(track.likes_count) || 0} ME GUSTA</button><span>PUBLICADO</span></div>`;
-        list.appendChild(card);
-      });
-      list.querySelectorAll(".like-button").forEach(button => button.addEventListener("click", () => likeTrack(button.dataset.id, button)));
-    } catch (err) {
-      say(`No se pudo cargar la comunidad: ${err.message || "revisa tablas y políticas"}`, true);
-    }
+  recentList.appendChild(row);
+});
+
+}
+
+function renderCommunityFeed() {
+if (!list) return;
+
+list.querySelectorAll(".remote-track").forEach(card => card.remove());
+
+if (empty) {
+  empty.hidden = publishedTracks.length > 0;
+}
+
+publishedTracks.forEach(track => {
+  const card = document.createElement("article");
+  card.className = "community-track remote-track";
+
+  const art = document.createElement("div");
+  art.className = "track-art";
+  if (track.cover_url) {
+    const image = document.createElement("img");
+    image.src = track.cover_url;
+    image.alt = `Portada de ${track.title || "track"}`;
+    image.loading = "lazy";
+    art.appendChild(image);
+  } else {
+    art.textContent = "888";
   }
 
-  async function likeTrack(id, button) {
-    if (!client) return;
-    // Basic public counter RPC is intentionally not enabled by default; configure likes policy/RPC before launch.
-    say("Para habilitar favoritos hay que crear la política/RPC de likes en Supabase.", true);
+  const info = document.createElement("div");
+  info.className = "community-track-info";
+
+  const title = document.createElement("b");
+  title.textContent = track.title || "Sin título";
+
+  const artist = document.createElement("span");
+  artist.textContent = `${track.artist || "Artista independiente"} · ${formatDate(track.created_at)}`;
+
+  const details = document.createElement("small");
+  details.textContent = `${track.genre || "COMMUNITY"}${track.description ? " · " + track.description : ""}`;
+
+  info.append(title, artist, details);
+
+  const audioPlayer = document.createElement("audio");
+  audioPlayer.controls = true;
+  audioPlayer.preload = "none";
+  audioPlayer.src = track.audio_url;
+  audioPlayer.setAttribute("aria-label", `Escuchar ${track.title || "canción comunitaria"}`);
+
+  const actions = document.createElement("div");
+  actions.className = "community-actions";
+
+  const likeButton = document.createElement("button");
+  likeButton.type = "button";
+  likeButton.className = "like-button";
+  likeButton.dataset.id = track.id;
+  likeButton.textContent = `♡ ${Number(track.likes_count) || 0} ME GUSTA`;
+
+  const publishedLabel = document.createElement("span");
+  publishedLabel.textContent = "PUBLICADO";
+
+  actions.append(likeButton, publishedLabel);
+  card.append(art, info, audioPlayer, actions);
+  list.appendChild(card);
+});
+
+}
+
+function addTracksToPlayer() {
+if (typeof window.addCommunityTrack !== "function") return;
+
+publishedTracks.forEach(track => {
+  window.addCommunityTrack({
+    id: track.id,
+    title: track.title,
+    artist: track.artist,
+    genre: track.genre,
+    src: track.audio_url,
+    duration: track.duration_seconds
+  });
+});
+
+}
+
+async function loadTracks() {
+if (!client) {
+setRecentStatus("SUPABASE NO CONFIGURADO");
+renderRecentTracks();
+return;
+}
+
+setRecentStatus("CARGANDO...");
+
+try {
+  const { data, error } = await client
+    .from("tracks")
+    .select("id,artist,title,genre,description,audio_url,cover_url,created_at,likes_count")
+    .eq("status", "published")
+    .order("created_at", { ascending: false })
+    .limit(30);
+
+  if (error) throw error;
+
+  publishedTracks = (data || []).filter(
+    track => typeof track.audio_url === "string" &&
+             track.audio_url.startsWith("https://")
+  );
+
+  renderRecentTracks();
+  renderCommunityFeed();
+  addTracksToPlayer();
+
+  setRecentStatus(`${publishedTracks.length} PUBLICADAS`);
+
+  if (!recentInitialized) {
+    recentInitialized = true;
   }
-  document.getElementById("refreshCommunity").addEventListener("click", loadTracks);
+
+  if (status && !form?.matches(":focus-within")) {
+    // No sobrescribir mensajes de carga o publicación mientras el usuario interactúa.
+  }
+} catch (error) {
+  console.error("Neural Community: error al cargar canciones", error);
+  setRecentStatus("ERROR DE CONEXIÓN");
+
+  if (recentList) {
+    recentList.replaceChildren();
+
+    const message = document.createElement("p");
+    message.className = "muted";
+    message.textContent = "No se pudieron cargar las canciones. Comprueba Supabase y sus políticas de lectura.";
+    recentList.appendChild(message);
+  }
+
+  say(`No se pudo cargar la comunidad: ${error.message || "revisa las políticas de Supabase"}`, true);
+}
+
+}
+
+async function uploadTrack(event) {
+event.preventDefault();
+
+if (!client) {
+  say("Configura Supabase antes de publicar.", true);
+  return;
+}
+
+const file = fileInput?.files?.[0];
+const maxUploadMB = Number(cfg.maxUploadMB) || 20;
+const maxBytes = maxUploadMB * 1024 * 1024;
+const allowed = /\.(mp3|wav|ogg|m4a)$/i.test(file?.name || "");
+
+if (!file || !allowed) {
+  say("Formato no válido. Usa MP3, WAV, OGG o M4A.", true);
+  return;
+}
+
+if (file.size > maxBytes) {
+  say(`Archivo demasiado grande. Máximo ${maxUploadMB} MB.`, true);
+  return;
+}
+
+const artist = document.getElementById("uploadArtist")?.value.trim();
+const title = document.getElementById("uploadTitle")?.value.trim();
+const genre = document.getElementById("uploadGenre")?.value;
+const description = document.getElementById("uploadDescription")?.value.trim();
+
+if (!artist || !title) {
+  say("Introduce el artista y el título.", true);
+  return;
+}
+
+const submit = form.querySelector('button[type="submit"]');
+submit.disabled = true;
+
+say("SUBIENDO AUDIO // ESPERA...");
+
+let objectPath = null;
+
+try {
+  const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  objectPath = `${crypto.randomUUID()}-${cleanName}`;
+
+  const { error: uploadError } = await client.storage
+    .from("community-audio")
+    .upload(objectPath, file, {
+      contentType: file.type || "application/octet-stream",
+      upsert: false
+    });
+
+  if (uploadError) throw uploadError;
+
+  const { data: publicData } = client.storage
+    .from("community-audio")
+    .getPublicUrl(objectPath);
+
+  // Upload optional cover art and store its public URL with the track.
+  const coverFile = document.getElementById("trackCover")?.files?.[0];
+  const coverUrl = coverFile ? await uploadTrackCover(coverFile) : null;
+
+  const { error: insertError } = await client.from("tracks").insert({
+    artist,
+    title,
+    genre,
+    description,
+    audio_path: objectPath,
+    audio_url: publicData.publicUrl,
+    cover_url: coverUrl,
+    status: "pending"
+  });
+
+  if (insertError) throw insertError;
+
+  form.reset();
+
+  if (fileHint) {
+    fileHint.textContent = `Tamaño máximo recomendado: ${maxUploadMB} MB`;
+  }
+
+  say("AUDIO RECIBIDO // PENDIENTE DE MODERACIÓN. Cuando se publique aparecerá en Últimas canciones.");
+
+  await loadTracks();
+} catch (error) {
+  console.error("Neural Community: error al publicar", error);
+
+  if (objectPath) {
+    await client.storage.from("community-audio").remove([objectPath]).catch(() => {});
+  }
+
+  say(`ERROR DE PUBLICACIÓN: ${error.message || "revisa la configuración de Supabase"}`, true);
+} finally {
+  submit.disabled = false;
+}
+
+}
+
+async function likeTrack() {
+say("Los favoritos necesitan una política o función RPC configurada en Supabase.", true);
+}
+
+if (fileInput && fileHint) {
+fileInput.addEventListener("change", () => {
+const file = fileInput.files?.[0];
+const maxUploadMB = Number(cfg.maxUploadMB) || 20;
+
+  if (!file) {
+    fileHint.textContent = `Tamaño máximo recomendado: ${maxUploadMB} MB`;
+    return;
+  }
+
+  fileHint.textContent = `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB`;
+
+  if (file.size > maxUploadMB * 1024 * 1024) {
+    say(`El archivo supera el límite de ${maxUploadMB} MB.`, true);
+  }
+});
+
+}
+
+if (form) {
+form.addEventListener("submit", uploadTrack);
+}
+
+if (refreshButton) {
+refreshButton.addEventListener("click", loadTracks);
+}
+
+if (list) {
+list.addEventListener("click", event => {
+const button = event.target.closest(".like-button");
+if (button) likeTrack(button.dataset.id, button);
+});
+// ========================================
+// NEURA — SUBIDA DE PORTADAS
+// Bucket de Supabase: imagenes
+// ========================================
+
+async function uploadTrackCover(file) {
+  if (!client) {
+    throw new Error("Supabase no está conectado.");
+  }
+
+  if (!file) {
+    return null;
+  }
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error("La portada debe ser JPG, PNG o WebP.");
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("La portada no puede superar los 5 MB.");
+  }
+
+  const extension = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp"
+  }[file.type];
+
+  const filename =
+    `covers/${crypto.randomUUID()}.${extension}`;
+
+  const { data, error } = await client.storage
+    .from("imagenes")
+    .upload(filename, file, {
+      cacheControl: "3600",
+      contentType: file.type,
+      upsert: false
+    });
+
+  if (error) {
+    console.error("Error subiendo portada:", error);
+    throw new Error(`No se pudo guardar la portada: ${error.message}`);
+  }
+
+  const { data: urlData } = client.storage
+    .from("imagenes")
+    .getPublicUrl(data.path);
+
+  return urlData.publicUrl;
+}
+
+// Vista previa de la portada seleccionada
+(() => {
+  const input = document.getElementById("trackCover");
+  const preview = document.getElementById("coverPreview");
+
+  if (!input || !preview) return;
+
+  input.addEventListener("change", () => {
+    const file = input.files?.[0];
+
+    if (!file) {
+      preview.hidden = true;
+      preview.removeAttribute("src");
+      return;
+    }
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      alert("Selecciona una imagen JPG, PNG o WebP.");
+      input.value = "";
+      preview.hidden = true;
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("La imagen debe pesar menos de 5 MB.");
+      input.value = "";
+      preview.hidden = true;
+      return;
+    }
+
+    preview.src = URL.createObjectURL(file);
+    preview.hidden = false;
+  });
+})();  
+}
+
+if (ready) {
+client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+say("SUPABASE CONFIGURADO // CARGANDO COMUNIDAD.");
+loadTracks();
+} else {
+say("SIN CONEXIÓN SUPABASE // Revisa URL/clave pública y ejecuta supabase-schema.sql; configura permisos de Storage.");
+setRecentStatus("MODO DEMO");
+renderRecentTracks();
+}
 })();

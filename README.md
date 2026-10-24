@@ -11,7 +11,7 @@ Web estática cyberpunk para GitHub Pages, con reproductor de audio y panel comu
 - `assets/neural-audio-hero.png`: arte visual del dashboard.
 
 ## Importante
-El panel se ve sin configurar backend, pero para que las subidas sean globales debes crear y configurar Supabase. Las publicaciones quedan pendientes de moderación. El frontend ya implementa subida y catálogo; perfiles/login, comentarios, playlists y favoritos están previstos en el esquema pero necesitan pantallas y lógica adicionales.
+El panel se ve sin configurar backend, pero para que las subidas sean globales debes crear y configurar Supabase. Las publicaciones quedan pendientes de moderación. El frontend implementa subida, catálogo y añade las canciones subidas/aprobadas a la playlist continua; perfiles/login, comentarios, playlists y favoritos están previstos en el esquema pero necesitan pantallas y lógica adicionales.
 
 ## Publicación
 1. Crea un repositorio en GitHub.
