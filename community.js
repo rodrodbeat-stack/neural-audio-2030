@@ -32,7 +32,7 @@ status.textContent = message;
 status.style.color = error ? "#ff6570" : "var(--green)";
 };
 
-const safe = value =>
+  const safe = value =>
   String(value ?? "").replace(/[&<>"']/g, ch => ({
     "&": "&amp;",
     "<": "&lt;",
