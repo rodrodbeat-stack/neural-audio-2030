@@ -76,9 +76,14 @@
         await client.storage.from("community-audio").remove([objectPath]);
         throw insertError;
       }
+      // Add the uploaded track to this visitor's playback queue immediately.
+      // It remains private/pending in the public catalog until moderation approves it.
+      if (window.addCommunityTrack) {
+        window.addCommunityTrack({ id: objectPath, title, artist, genre, src: publicData.publicUrl }, { playNow: false });
+      }
       form.reset();
       fileHint.textContent = "Tamaño máximo recomendado: 20 MB";
-      say("AUDIO RECIBIDO // EN REVISIÓN. Se publicará después de la moderación.");
+      say("AUDIO RECIBIDO // AÑADIDO A TU PLAYLIST. La publicación pública queda pendiente de revisión.");
       await loadTracks();
     } catch (err) {
       say(`ERROR DE PUBLICACIÓN: ${err.message || "revisa configuración y políticas de Supabase"}`, true);
@@ -108,6 +113,9 @@
           <audio controls preload="none" src="${safe(track.audio_url)}"></audio>
           <div class="community-actions"><button type="button" class="like-button" data-id="${safe(track.id)}">♡ ${Number(track.likes_count) || 0} ME GUSTA</button><span>PUBLICADO</span></div>`;
         list.appendChild(card);
+        if (window.addCommunityTrack) {
+          window.addCommunityTrack({ id: track.id, title: track.title, artist: track.artist, genre: track.genre, src: track.audio_url });
+        }
       });
       list.querySelectorAll(".like-button").forEach(button => button.addEventListener("click", () => likeTrack(button.dataset.id, button)));
     } catch (err) {
