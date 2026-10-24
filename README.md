@@ -18,3 +18,7 @@ El panel se ve sin configurar backend, pero para que las subidas sean globales d
 2. Sube el contenido de esta carpeta a la raíz.
 3. Configura Supabase siguiendo `SETUP-SUPABASE.md`.
 4. En GitHub, Settings → Pages → Deploy from a branch → `main` → `/(root)`.
+
+
+## Video animado en portada
+La portada utiliza `assets/hero-video.mp4` como fondo en bucle, silenciado y compatible con móviles. Para verlo en GitHub Pages, sube y publica **todo el contenido** de esta carpeta en el repositorio (incluida la carpeta `assets`) y luego recarga la web sin caché. Abrir el ZIP o reemplazar archivos solo en tu dispositivo no actualiza automáticamente la web publicada.

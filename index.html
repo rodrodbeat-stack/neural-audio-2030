@@ -57,8 +57,8 @@
 </aside>
 
 <main class="main-content" id="inicio">
-  <section class="hero" aria-label="888 Digital Factory audio studio">
-    <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/neural-audio-hero.png" aria-hidden="true">
+  <section class="hero hero-video-active" aria-label="888 Digital Factory audio studio">
+    <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="assets/neural-audio-hero.png" aria-hidden="true">
       <source src="assets/hero-video.mp4" type="video/mp4">
     </video>
     <div class="hero-video-overlay" aria-hidden="true"></div>
@@ -401,6 +401,20 @@
 <script src="community-config.js"></script>
 <script src="app.js"></script>
 <script src="community.js"></script>
+
+<script>
+// Start the hero background video where autoplay is permitted. It is muted intentionally.
+window.addEventListener('DOMContentLoaded', function () {
+  const heroVideo = document.querySelector('.hero-video');
+  if (!heroVideo) return;
+  heroVideo.muted = true;
+  heroVideo.defaultMuted = true;
+  heroVideo.playsInline = true;
+  const startVideo = () => { const p = heroVideo.play(); if (p && p.catch) p.catch(() => { /* browser may restrict autoplay until user interaction */ }); };
+  startVideo();
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && heroVideo.paused) startVideo(); });
+});
+</script>
 </body>
 </html>
 
