@@ -6,6 +6,9 @@
  *    SOLO si las políticas RLS están activadas. Nunca pongas una service_role key aquí.
  */
 
-window.NEURAL_COMMUNITY_CONFIG = { 
- supabaseUrl: "https://sxykgsebgqlhhcxhpmsi.supabase.co", 
- supabaseAnonKey: "sb_publishable_XsvEebF9ZovaM8hVKBjyGQ_1h5qyQc6", maxUploadMB: 20 };
+window.NEURAL_COMMUNITY_CONFIG = {
+  supabaseUrl: "https://sxykgsebgqlhhcxhpmsi.supabase.coO.supabase.co",
+  supabaseAnonKey: "sb_publishable_g7x4nZh9U9iKyB7JL1Uo0g_Q9seB5jP",
+  maxUploadMB: 20
+};",
+  
