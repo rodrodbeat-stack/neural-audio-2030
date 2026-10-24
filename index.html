@@ -297,6 +297,54 @@
       <small id="fileHint">Tamaño máximo recomendado: 20 MB</small>
     </label>
 
+    <div class="cover-upload">
+  <label for="trackCover">🖼️ Portada del tema</label>
+
+  <input
+    type="file"
+    id="trackCover"
+    accept="image/jpeg,image/png,image/webp"
+  >
+
+  <img
+    id="coverPreview"
+    alt="Vista previa de la portada"
+    hidden
+    style="width:140px;height:140px;object-fit:cover;border-radius:12px;margin-top:12px;"
+  >
+</div>
+
+<script>
+  const coverInput = document.getElementById("trackCover");
+  const coverPreview = document.getElementById("coverPreview");
+
+  coverInput.addEventListener("change", () => {
+    const file = coverInput.files[0];
+
+    if (!file) {
+      coverPreview.hidden = true;
+      return;
+    }
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      alert("Selecciona una imagen JPG, PNG o WebP.");
+      coverInput.value = "";
+      coverPreview.hidden = true;
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("La imagen debe pesar menos de 5 MB.");
+      coverInput.value = "";
+      coverPreview.hidden = true;
+      return;
+    }
+
+    coverPreview.src = URL.createObjectURL(file);
+    coverPreview.hidden = false;
+  });
+</script>
+
     <label class="rights-check">
       <input type="checkbox" id="rightsConfirm" required>
       Confirmo que tengo derechos para compartir este audio.
