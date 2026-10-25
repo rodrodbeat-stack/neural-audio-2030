@@ -1,9 +1,9 @@
 const tracks = [
-  {title:"Cyber Heart", artist:"Neural Drift", genre:"DARK SYNTH", src:"music/music/neural-drift-demo.wav"},
-  {title:"Digital Collapse", artist:"Void Structure", genre:"INDUSTRIAL", src:"music/music/neural-drift-demo.wav"},
-  {title:"Last Transmission", artist:"Synthetic Souls", genre:"CYBERPUNK", src:"music/music/neural-drift-demo.wav"},
-  {title:"Industrial Pulse", artist:"The Machine", genre:"DARK TECHNO", src:"music/music/neural-drift-demo.wav"},
-  {title:"Human Error", artist:"Biomechanic", genre:"DARK AMBIENT", src:"music/music/neural-drift-demo.wav"}
+  {title:"Cyber Heart", artist:"Neural Drift", genre:"DARK SYNTH", src:"music/neural-drift-demo.wav"},
+  {title:"Digital Collapse", artist:"Void Structure", genre:"INDUSTRIAL", src:"music/neural-drift-demo.wav"},
+  {title:"Last Transmission", artist:"Synthetic Souls", genre:"CYBERPUNK", src:"music/neural-drift-demo.wav"},
+  {title:"Industrial Pulse", artist:"The Machine", genre:"DARK TECHNO", src:"music/neural-drift-demo.wav"},
+  {title:"Human Error", artist:"Biomechanic", genre:"DARK AMBIENT", src:"music/neural-drift-demo.wav"}
 ];
 const audio = document.getElementById("audio");
 const playPause = document.getElementById("playPause");

@@ -57,11 +57,7 @@
 </aside>
 
 <main class="main-content" id="inicio">
-  <section class="hero hero-video-active" aria-label="888 Digital Factory audio studio">
-    <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="assets/neural-audio-hero.png" aria-hidden="true">
-      <source src="assets/hero-video.mp4" type="video/mp4">
-    </video>
-    <div class="hero-video-overlay" aria-hidden="true"></div>
+  <section class="hero" aria-label="888 Digital Factory audio studio">
     <div class="hero-copy">
       <p class="eyebrow">888 DIGITAL FACTORY // AUDIO SYSTEM</p>
       <h1>NEURAL AUDIO <span>2050</span></h1>
@@ -81,38 +77,38 @@
     </div>
 
     <div class="album-grid">
-      <button class="album-card selected" data-track="7">
+      <button class="album-card selected" data-track="5">
         <img src="assets/Screenshot_20261001_230106.jpg" alt="">
-        <span class="album-title">Metanoia</span>
-        <small>inframundo</small>
+        <span class="album-title">NEURAL DRIFT</span>
+        <small>Cyber Heart · DARK SYNTH</small>
         <b>U-001 <em>▶</em></b>
       </button>
 
       <button class="album-card" data-track="5">
         <img src="assets/Screenshot_20261013_191726_com.android.chrome.jpg" alt="">
-        <span class="album-title">Golgota</span>
-        <small>Digital Collapse · Brutal noise</small>
+        <span class="album-title">VOID STRUCTURE</span>
+        <small>Digital Collapse · INDUSTRIAL</small>
         <b>U-002 <em>▶</em></b>
       </button>
 
-      <button class="album-card" data-track="4">
+      <button class="album-card" data-track="3">
         <img src="assets/Screenshot_20261013_191450_com.android.chrome.jpg" alt="">
-        <span class="album-title">Metanoia</span>
+        <span class="album-title">SYNTHETIC SOULS</span>
         <small>Last Transmission · CYBERPUNK</small>
         <b>U-003 <em>▶</em></b>
       </button>
 
-      <button class="album-card" data-track="12">
+      <button class="album-card" data-track="3">
         <img src="assets/Screenshot_20261001_230138.jpg" alt="">
-        <span class="album-title">metanoia</span>
-        <small>Brutal Noise</small>
+        <span class="album-title">THE MACHINE</span>
+        <small>Industrial Pulse · TECHNO</small>
         <b>U-004 <em>▶</em></b>
       </button>
 
-      <button class="album-card" data-track="11">
+      <button class="album-card" data-track="4">
         <img src="assets/Cyborg_With_Red_Eye-cambia-el-texto-terminator-por-888-digital-factory.jpg" alt="">
         <span class="album-title">BIOMECHANIC</span>
-        <small>Perrasfinas · BIOMECHANICAL</small>
+        <small>Human Error · BIOMECHANICAL</small>
         <b>U-005 <em>▶</em></b>
       </button>
     </div>
@@ -200,9 +196,9 @@
     <div class="now-playing">
       <img src="assets/neural-audio-hero.png" alt="Arte de Neural Audio">
       <div>
-        <h3 id="nowTitle">bios punk</h3>
-        <p id="nowArtist">metanoia</p>
-        <small id="nowGenre">BRUTAL NOISE</small>
+        <h3 id="nowTitle">Cyber Heart</h3>
+        <p id="nowArtist">Neural Drift</p>
+        <small id="nowGenre">DARK SYNTH</small>
       </div>
     </div>
 
@@ -227,7 +223,7 @@
       <input type="range" id="volume" min="0" max="1" step=".01" value=".72">
     </label>
 
-    <audio id="audio" preload="metadata" src="music/bios-punk_.mp3"></audio>
+    <audio id="audio" preload="metadata" src="music/neural-drift-demo.wav"></audio>
   </section>
 
   <section class="panel playlist-panel" id="playlist">
@@ -247,7 +243,7 @@
     <p class="muted">LOGS DEL SISTEMA</p>
     <div class="terminal" id="terminalLogs">
       <p>T-00:01:22 &nbsp; AUDIO CORE INITIALIZED</p>
-      <p>T-00:01:27 &nbsp; TRACK LOADED: INFRAMUNDO</p>
+      <p>T-00:01:27 &nbsp; TRACK LOADED: Cyber Heart</p>
       <p>T-00:03:14 &nbsp; NEURAL SIGNAL DETECTED</p>
       <p>T-00:03:15 &nbsp; EQUALIZER OPTIMIZED</p>
       <p>T-00:04:02 &nbsp; PLAYLIST UPDATED</p>
@@ -297,9 +293,10 @@
 
     <label class="file-drop">ARCHIVO DE AUDIO
       <input id="uploadFile" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4" required>
-      <span>ARRASTRA O SELECCIONA MP3 / WAV / OGG / M4A</span>
-      <small id="fileHint">Tamaño máximo recomendado: 20 MB</small>
+      <span class="drop-icon">⇧</span><strong>ARRASTRA TU AUDIO AQUÍ</strong><small>o toca para explorar · MP3 / WAV / OGG / M4A</small><small id="fileHint">Tamaño máximo: 20 MB</small>
     </label>
+
+    <div class="audio-preview" id="audioPreview" hidden><div class="preview-head"><span>▰ AUDIO PREVIEW // READY</span><span id="previewDuration">00:00</span></div><div class="preview-wave" aria-hidden="true"></div><audio id="uploadPreviewPlayer" controls></audio></div>
 
     <div class="cover-upload">
   <label for="trackCover">🖼️ Portada del tema</label>
@@ -367,6 +364,7 @@
       <button class="small-button" id="refreshCommunity" type="button">↻ ACTUALIZAR</button>
     </div>
 
+    <div class="feed-tools"><input id="communitySearch" type="search" placeholder="⌕ Buscar artista o track..." aria-label="Buscar en la comunidad"><select id="communityGenre" aria-label="Filtrar género"><option value="">TODOS LOS GÉNEROS</option><option>Noise</option><option>Brutal Noise</option><option>Dark Ambient</option><option>Industrial</option><option>Cyberpunk</option><option>Dark Synth</option><option>Metal</option><option>Experimental</option></select></div>
     <div id="communityTracks" class="community-tracks">
       <article class="community-track demo-track">
         <div class="track-art">888</div>
@@ -392,34 +390,7 @@
   </div>
 </div>
 
-  </section>
-
-  <section class="video-upload-panel" id="videoUploadPanel">
-    <div class="section-heading">
-      <h2><span>▣</span> NEURAL COMMUNITY // VIDEO TRANSMISSION</h2>
-      <span class="community-live"><i></i> VIDEO NODE</span>
-    </div>
-    <p class="community-intro">Comparte videoclips, visuales cyberpunk, sesiones en vivo y material de tus producciones.</p>
-    <form id="videoUploadForm" class="video-upload-form">
-      <div class="video-upload-fields">
-        <label>ARTISTA / ALIAS<input id="videoArtist" maxlength="60" required placeholder="Tu alias artístico"></label>
-        <label>TÍTULO DEL VIDEO<input id="videoTitle" maxlength="100" required placeholder="Nombre del videoclip"></label>
-      </div>
-      <label class="file-drop video-file-drop" for="communityVideoFile">
-        <span class="video-upload-icon">⬆</span><strong>SELECCIONAR VIDEO PARA SUBIR</strong>
-        <small>MP4 / WebM / MOV · máximo recomendado 100 MB</small>
-        <input id="communityVideoFile" type="file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" required>
-      </label>
-      <video id="communityVideoPreview" class="community-video-preview" controls playsinline preload="metadata" hidden></video>
-      <div id="videoFileInfo" class="video-file-info" aria-live="polite">ESPERANDO ARCHIVO DE VIDEO...</div>
-      <label class="rights-check"><input id="videoRightsConfirm" type="checkbox" required> Confirmo que tengo derechos para compartir este video.</label>
-      <button id="publishVideoButton" class="btn-primary full" type="submit">⬆ PUBLICAR VIDEO EN NEURAL COMMUNITY</button>
-      <p id="videoUploadStatus" class="community-status" aria-live="polite">Selecciona un video para ver la vista previa. La publicación global requiere configurar Supabase.</p>
-    </form>
-    <div id="communityVideos" class="community-videos" aria-live="polite"></div>
-  </section>
-
-  <footer class="footer">
+  </section>  <footer class="footer">
     <span>NEURAL AUDIO 2050 &nbsp; // &nbsp; STREAMING THE FUTURE</span>
     <div class="waveform" aria-hidden="true"></div>
     <span>888 DIGITAL FACTORY &nbsp; | &nbsp; PRIVACY &nbsp; | &nbsp; CONTACTO</span>
@@ -428,20 +399,6 @@
 <script src="community-config.js"></script>
 <script src="app.js"></script>
 <script src="community.js"></script>
-
-<script>
-// Start the hero background video where autoplay is permitted. It is muted intentionally.
-window.addEventListener('DOMContentLoaded', function () {
-  const heroVideo = document.querySelector('.hero-video');
-  if (!heroVideo) return;
-  heroVideo.muted = true;
-  heroVideo.defaultMuted = true;
-  heroVideo.playsInline = true;
-  const startVideo = () => { const p = heroVideo.play(); if (p && p.catch) p.catch(() => { /* browser may restrict autoplay until user interaction */ }); };
-  startVideo();
-  document.addEventListener('visibilitychange', () => { if (!document.hidden && heroVideo.paused) startVideo(); });
-});
-</script>
 </body>
 </html>
 

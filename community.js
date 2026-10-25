@@ -155,15 +155,7 @@ publishedTracks.forEach(track => {
 
   const art = document.createElement("div");
   art.className = "track-art";
-  if (track.cover_url) {
-    const image = document.createElement("img");
-    image.src = track.cover_url;
-    image.alt = `Portada de ${track.title || "track"}`;
-    image.loading = "lazy";
-    art.appendChild(image);
-  } else {
-    art.textContent = "888";
-  }
+  art.textContent = "888";
 
   const info = document.createElement("div");
   info.className = "community-track-info";
@@ -232,7 +224,7 @@ setRecentStatus("CARGANDO...");
 try {
   const { data, error } = await client
     .from("tracks")
-    .select("id,artist,title,genre,description,audio_url,cover_url,created_at,likes_count")
+    .select("id,artist,title,genre,description,audio_url,created_at,likes_count")
     .eq("status", "published")
     .order("created_at", { ascending: false })
     .limit(30);
@@ -332,10 +324,6 @@ try {
     .from("community-audio")
     .getPublicUrl(objectPath);
 
-  // Upload optional cover art and store its public URL with the track.
-  const coverFile = document.getElementById("trackCover")?.files?.[0];
-  const coverUrl = coverFile ? await uploadTrackCover(coverFile) : null;
-
   const { error: insertError } = await client.from("tracks").insert({
     artist,
     title,
@@ -343,7 +331,6 @@ try {
     description,
     audio_path: objectPath,
     audio_url: publicData.publicUrl,
-    cover_url: coverUrl,
     status: "pending"
   });
 
@@ -506,168 +493,30 @@ client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
 say("SUPABASE CONFIGURADO // CARGANDO COMUNIDAD.");
 loadTracks();
 } else {
-say("SIN CONEXIÓN SUPABASE // Revisa URL/clave pública y ejecuta supabase-schema.sql; configura permisos de Storage.");
+say("MODO DEMO // Falta configurar Supabase para publicaciones globales.");
 setRecentStatus("MODO DEMO");
 renderRecentTracks();
 }
 })();
-// NEURAL COMMUNITY VIDEO UPLOAD: preview locally and publish to Supabase when configured.
+
+// UX layer: drag/drop, local audio preview, feed search/filter and responsive likes.
 (() => {
-  const form = document.getElementById('videoUploadForm');
-  if (!form) return;
-  const input = document.getElementById('communityVideoFile');
-  const preview = document.getElementById('communityVideoPreview');
-  const info = document.getElementById('videoFileInfo');
-  const status = document.getElementById('videoUploadStatus');
-  const button = document.getElementById('publishVideoButton');
-  const videos = document.getElementById('communityVideos');
-  const cfg = window.NEURAL_COMMUNITY_CONFIG || {};
-  let previewUrl = null;
-  const MAX_VIDEO_MB = Number(cfg.maxVideoUploadMB) || 100;
-  const setStatus = (message, bad = false) => {
-    status.textContent = message;
-    status.style.color = bad ? '#ff6570' : 'var(--green)';
-  };
-  const sizeLabel = bytes => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-  input.addEventListener('change', () => {
-    const file = input.files && input.files[0];
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    previewUrl = null;
-    preview.removeAttribute('src');
-    preview.hidden = true;
-    if (!file) {
-      info.textContent = 'ESPERANDO ARCHIVO DE VIDEO...';
-      return;
-    }
-    if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov)$/i.test(file.name)) {
-      input.value = '';
-      info.textContent = 'FORMATO NO VÁLIDO';
-      setStatus('Selecciona un video MP4, WebM o MOV.', true);
-      return;
-    }
-    if (file.size > MAX_VIDEO_MB * 1024 * 1024) {
-      input.value = '';
-      info.textContent = 'VIDEO DEMASIADO GRANDE';
-      setStatus(`El video supera el límite de ${MAX_VIDEO_MB} MB.`, true);
-      return;
-    }
-    previewUrl = URL.createObjectURL(file);
-    preview.src = previewUrl;
-    preview.hidden = false;
-    info.textContent = `${file.name} · ${sizeLabel(file.size)} · VIDEO LISTO`;
-    setStatus('Vista previa lista. Completa alias y título para publicar.');
+ const file=document.getElementById('uploadFile'), drop=file?.closest('.file-drop');
+ const preview=document.getElementById('audioPreview'), player=document.getElementById('uploadPreviewPlayer');
+ const duration=document.getElementById('previewDuration');
+ if(file&&drop){
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('dragover')}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('dragover')}));
+  drop.addEventListener('drop',e=>{const f=e.dataTransfer.files?.[0];if(f){try{file.files=e.dataTransfer.files}catch{};file.dispatchEvent(new Event('change',{bubbles:true}));}});
+  file.addEventListener('change',()=>{
+   const f=file.files?.[0]; if(!f)return;
+   if(player){player.src=URL.createObjectURL(f);preview.hidden=false;player.onloadedmetadata=()=>{const d=Math.floor(player.duration||0);duration.textContent=`${String(d/60|0).padStart(2,'0')}:${String(d%60).padStart(2,'0')}`}}
+   drop.querySelector('strong').textContent='✓ AUDIO CARGADO';
   });
-
-  function addVideoCard(title, artist, url) {
-    // Prevent duplicate cards when the feed is refreshed after an upload.
-    if ([...videos.querySelectorAll('.community-video-card')].some(card => card.dataset.videoUrl === url)) return;
-    const card = document.createElement('article');
-    card.className = 'community-video-card';
-    card.dataset.videoUrl = url;
-    const player = document.createElement('video');
-    player.src = url;
-    player.controls = true;
-    player.playsInline = true;
-    player.preload = 'metadata';
-    const heading = document.createElement('b');
-    heading.textContent = title;
-    const author = document.createElement('small');
-    author.textContent = `VIDEO · ${artist}`;
-    card.append(player, heading, author);
-    videos.prepend(card);
-  }
-
-  async function loadPublishedVideos() {
-    if (!window.supabase || !cfg.supabaseUrl || !cfg.supabaseAnonKey ||
-        !cfg.supabaseUrl.startsWith('https://') || cfg.supabaseUrl.includes('PEGA_AQUI') ||
-        cfg.supabaseAnonKey.includes('PEGA_AQUI')) {
-      return;
-    }
-    try {
-      const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
-      const { data, error } = await client.from('video_posts')
-        .select('id, artist, title, video_url, created_at')
-        .eq('status', 'published')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      videos.replaceChildren();
-      (data || []).forEach(video => addVideoCard(video.title, video.artist, video.video_url));
-      if (!data || data.length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'muted';
-        empty.textContent = 'AÚN NO HAY VIDEOS PUBLICADOS. Los videos nuevos aparecen aquí cuando se aprueban en Supabase.';
-        videos.appendChild(empty);
-      }
-    } catch (error) {
-      console.error('Neural Community: error cargando videos publicados:', error);
-      setStatus(`No se pudieron cargar los videos publicados: ${error.message || 'revisa las políticas SELECT de video_posts'}`, true);
-    }
-  }
-
-  loadPublishedVideos();
-
-  form.addEventListener('submit', async event => {
-    event.preventDefault();
-    const file = input.files && input.files[0];
-    const artist = document.getElementById('videoArtist').value.trim();
-    const title = document.getElementById('videoTitle').value.trim();
-    if (!file || !artist || !title) {
-      setStatus('Completa el alias, el título y selecciona un video.', true);
-      return;
-    }
-    if (!document.getElementById('videoRightsConfirm').checked) {
-      setStatus('Confirma que tienes derechos para compartir este video.', true);
-      return;
-    }
-    const ready = Boolean(window.supabase && cfg.supabaseUrl && cfg.supabaseAnonKey &&
-      cfg.supabaseUrl.startsWith('https://') && !cfg.supabaseUrl.includes('PEGA_AQUI') &&
-      !cfg.supabaseAnonKey.includes('PEGA_AQUI'));
-    if (!ready) {
-      setStatus('Vista previa disponible. Para que otros usuarios vean el video, configura Supabase y crea el bucket community-videos y la tabla video_posts.', true);
-      return;
-    }
-    button.disabled = true;
-    setStatus('SUBIENDO VIDEO // NO CIERRES ESTA PÁGINA...');
-    let path = null;
-    try {
-      const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
-      const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      path = `${crypto.randomUUID()}-${cleanName}`;
-      const { error: uploadError } = await client.storage.from('community-videos').upload(path, file, {
-        contentType: file.type || 'video/mp4', upsert: false
-      });
-      if (uploadError) throw uploadError;
-      const { data: publicData } = client.storage.from('community-videos').getPublicUrl(path);
-      const { error: insertError } = await client.from('video_posts').insert({
-        artist, title, video_path: path, video_url: publicData.publicUrl, status: 'pending'
-      });
-      if (insertError) throw insertError;
-      addVideoCard(title, artist, publicData.publicUrl);
-      form.reset();
-      preview.hidden = true;
-      preview.removeAttribute('src');
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      previewUrl = null;
-      info.textContent = 'VIDEO ENVIADO · PENDIENTE DE MODERACIÓN';
-      setStatus('VIDEO RECIBIDO. Quedó pendiente de moderación antes de publicarse globalmente.');
-    } catch (error) {
-      console.error('Neural Community video upload:', error);
-      if (path) {
-        const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
-        await client.storage.from('community-videos').remove([path]).catch(() => {});
-      }
-      const rawMessage = String(error.message || error.error_description || 'revisa la configuración de Supabase');
-      const normalized = rawMessage.toLowerCase();
-      if (normalized.includes('bucket') && (normalized.includes('not found') || normalized.includes('does not exist') || normalized.includes('no existe'))) {
-        setStatus('BUCKET NO ENCONTRADO: abre Supabase → SQL Editor y ejecuta FIX-BUCKET-VIDEOS.sql. Debe crearse exactamente como community-videos. Luego vuelve a intentar.', true);
-      } else if (normalized.includes('row-level security') || normalized.includes('permission denied') || normalized.includes('not allowed')) {
-        setStatus('SUPABASE BLOQUEÓ LA SUBIDA POR PERMISOS. Ejecuta FIX-BUCKET-VIDEOS.sql en SQL Editor y revisa las políticas de Storage.', true);
-      } else {
-        setStatus(`ERROR AL SUBIR VIDEO: ${rawMessage}`, true);
-      }
-    } finally {
-      button.disabled = false;
-    }
-  });
+ }
+ const search=document.getElementById('communitySearch'), genre=document.getElementById('communityGenre'), feed=document.getElementById('communityTracks');
+ function filter(){if(!feed)return;const q=(search?.value||'').toLowerCase(),g=genre?.value||'';feed.querySelectorAll('.community-track').forEach(card=>{const text=card.innerText.toLowerCase();card.hidden=!(text.includes(q)&&(!g||text.includes(g.toLowerCase())))});}
+ search?.addEventListener('input',filter);genre?.addEventListener('change',filter);
+ // Demo likes persist per browser/device; global likes require a Supabase RPC policy.
+ feed?.addEventListener('click',e=>{const b=e.target.closest('.like-button');if(!b)return;const id=b.dataset.id,key='neural-liked-'+id,liked=localStorage.getItem(key)==='1';localStorage.setItem(key,liked?'0':'1');b.classList.toggle('liked',!liked);const count=Number((b.textContent.match(/\d+/)||[0])[0])||0;b.textContent=`${!liked?'♥':'♡'} ${Math.max(0,count+(liked?-1:1))} ME GUSTA`;});
 })();
-
