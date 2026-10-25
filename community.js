@@ -17,7 +17,7 @@ const ready = Boolean(
 window.supabase &&
 cfg.supabaseUrl &&
 cfg.supabaseAnonKey &&
-cfg.supabaseUrl.startsWith("http://") &&
+cfg.supabaseUrl.startsWith("https://") &&
 !cfg.supabaseUrl.includes("PEGA_AQUI") &&
 !cfg.supabaseAnonKey.includes("PEGA_AQUI")
 );
