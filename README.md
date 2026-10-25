@@ -22,3 +22,7 @@ El panel se ve sin configurar backend, pero para que las subidas sean globales d
 
 ## Video animado en portada
 La portada utiliza `assets/hero-video.mp4` como fondo en bucle, silenciado y compatible con móviles. Para verlo en GitHub Pages, sube y publica **todo el contenido** de esta carpeta en el repositorio (incluida la carpeta `assets`) y luego recarga la web sin caché. Abrir el ZIP o reemplazar archivos solo en tu dispositivo no actualiza automáticamente la web publicada.
+
+## Reparación de subida de videos
+
+Si Supabase muestra que faltan las columnas `artist` o `video_path`, ejecuta `FIX-VIDEO-POSTS.sql` en Supabase → SQL Editor. Después recarga la página y vuelve a subir el video. Este script añade las columnas faltantes sin borrar registros. Los videos quedan como `pending` y solo se muestran públicamente después de cambiar su estado a `published`.
