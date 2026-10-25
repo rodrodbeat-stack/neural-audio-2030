@@ -559,8 +559,11 @@ renderRecentTracks();
   });
 
   function addVideoCard(title, artist, url) {
+    // Prevent duplicate cards when the feed is refreshed after an upload.
+    if ([...videos.querySelectorAll('.community-video-card')].some(card => card.dataset.videoUrl === url)) return;
     const card = document.createElement('article');
     card.className = 'community-video-card';
+    card.dataset.videoUrl = url;
     const player = document.createElement('video');
     player.src = url;
     player.controls = true;
@@ -574,31 +577,33 @@ renderRecentTracks();
     videos.prepend(card);
   }
 
-  // Render videos already approved for public viewing.
   async function loadPublishedVideos() {
-    const ready = Boolean(window.supabase && cfg.supabaseUrl && cfg.supabaseAnonKey &&
-      cfg.supabaseUrl.startsWith('https://') && !cfg.supabaseUrl.includes('PEGA_AQUI') &&
-      !cfg.supabaseAnonKey.includes('PEGA_AQUI'));
-    if (!ready) {
-      videos.innerHTML = '<div class="community-empty">MODO LOCAL: selecciona un video para probar la vista previa. Configura Supabase para publicar y ver videos de la comunidad.</div>';
+    if (!window.supabase || !cfg.supabaseUrl || !cfg.supabaseAnonKey ||
+        !cfg.supabaseUrl.startsWith('https://') || cfg.supabaseUrl.includes('PEGA_AQUI') ||
+        cfg.supabaseAnonKey.includes('PEGA_AQUI')) {
       return;
     }
     try {
       const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
       const { data, error } = await client.from('video_posts')
-        .select('id,title,artist,video_url,created_at')
-        .eq('status', 'published').order('created_at', { ascending: false }).limit(30);
+        .select('id, artist, title, video_url, created_at')
+        .eq('status', 'published')
+        .order('created_at', { ascending: false });
       if (error) throw error;
       videos.replaceChildren();
-      (data || []).reverse().forEach(item => addVideoCard(item.title, item.artist, item.video_url));
+      (data || []).forEach(video => addVideoCard(video.title, video.artist, video.video_url));
       if (!data || data.length === 0) {
-        videos.innerHTML = '<div class="community-empty">Aún no hay videos publicados. Los envíos nuevos quedan pendientes de moderación.</div>';
+        const empty = document.createElement('p');
+        empty.className = 'muted';
+        empty.textContent = 'AÚN NO HAY VIDEOS PUBLICADOS. Los videos nuevos aparecen aquí cuando se aprueban en Supabase.';
+        videos.appendChild(empty);
       }
     } catch (error) {
-      console.error('Neural Community video feed:', error);
-      videos.innerHTML = '<div class="community-empty">No se pudo cargar la galería de videos. Revisa la tabla video_posts y sus permisos de lectura en Supabase.</div>';
+      console.error('Neural Community: error cargando videos publicados:', error);
+      setStatus(`No se pudieron cargar los videos publicados: ${error.message || 'revisa las políticas SELECT de video_posts'}`, true);
     }
   }
+
   loadPublishedVideos();
 
   form.addEventListener('submit', async event => {
@@ -627,8 +632,7 @@ renderRecentTracks();
     try {
       const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
       const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const uniqueId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-      path = `${uniqueId}-${cleanName}`;
+      path = `${crypto.randomUUID()}-${cleanName}`;
       const { error: uploadError } = await client.storage.from('community-videos').upload(path, file, {
         contentType: file.type || 'video/mp4', upsert: false
       });

@@ -10,6 +10,5 @@
 window.NEURAL_COMMUNITY_CONFIG = {
   supabaseUrl: "https://sxykgsebgqlhhcxhpmsi.supabase.co",
   supabaseAnonKey: "sb_publishable_g7x4nZh9U9iKyB7JL1Uo0g_Q9seB5jP",
-  maxUploadMB: 20,
-  maxVideoUploadMB: 100
+  maxUploadMB: 20
 };
