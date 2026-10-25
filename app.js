@@ -140,6 +140,128 @@ function updateClock() {
   const clock = document.getElementById("clock");
   if (clock) clock.textContent = new Date().toLocaleTimeString("es-CL", {hour12:false});
 }
+// ============================================
+// 888 DIGITAL FACTORY - PUBLICACIÓN DE VÍDEOS
+// Neural Audio 2030 + Supabase
+// ============================================
+
+// IMPORTANTE:
+// Debe existir una instancia de Supabase llamada "supabase".
+// Ajusta VIDEO_BUCKET al nombre REAL de tu bucket.
+
+const VIDEO_BUCKET = "videos";
+
+// Publicar un vídeo
+async function publishVideo({
+    file,
+    title,
+    description = ""
+}) {
+    try {
+        // 1. Validar archivo
+        if (!file) {
+            throw new Error("Selecciona un vídeo.");
+        }
+
+        if (!title || !title.trim()) {
+            throw new Error("Introduce el título del vídeo.");
+        }
+
+        // 2. Comprobar autenticación
+        const {
+            data: { user },
+            error: authError
+        } = await supabase.auth.getUser();
+
+        if (authError) {
+            throw authError;
+        }
+
+        if (!user) {
+            throw new Error(
+                "Debes iniciar sesión para publicar vídeos."
+            );
+        }
+
+        // 3. Crear una ruta única
+        const extension =
+            file.name.split(".").pop()?.toLowerCase() || "mp4";
+
+        const filePath =
+            `${user.id}/${crypto.randomUUID()}.${extension}`;
+
+        // 4. Subir vídeo a Storage
+        const {
+            data: uploadedFile,
+            error: uploadError
+        } = await supabase.storage
+            .from(VIDEO_BUCKET)
+            .upload(filePath, file, {
+                cacheControl: "3600",
+                upsert: false,
+                contentType: file.type || "video/mp4"
+            });
+
+        if (uploadError) {
+            throw new Error(
+                "No se pudo subir el vídeo: " +
+                uploadError.message
+            );
+        }
+
+        // 5. Registrar publicación en la base de datos
+        const {
+            data: video,
+            error: insertError
+        } = await supabase
+            .from("video_posts")
+            .insert({
+                user_id: user.id,
+                title: title.trim(),
+                description: description.trim(),
+                video_path: uploadedFile.path,
+                status: "pending"
+            })
+            .select()
+            .single();
+
+        // 6. Si falla el registro, limpiar el archivo subido
+        if (insertError) {
+            const { error: cleanupError } =
+                await supabase.storage
+                    .from(VIDEO_BUCKET)
+                    .remove([uploadedFile.path]);
+
+            if (cleanupError) {
+                console.error(
+                    "No se pudo limpiar el archivo:",
+                    cleanupError
+                );
+            }
+
+            throw new Error(
+                "No se pudo registrar la publicación: " +
+                insertError.message
+            );
+        }
+
+        console.log("Vídeo registrado:", video);
+
+        alert(
+            "Vídeo enviado correctamente. " +
+            "Quedará pendiente de aprobación."
+        );
+
+        return video;
+
+    } catch (error) {
+        console.error("ERROR AL SUBIR VIDEO:", error);
+
+        alert("ERROR AL SUBIR VIDEO: " + error.message);
+
+        return null;
+    }
+}
 renderQueue();
 updateClock();
 setInterval(updateClock, 1000);
