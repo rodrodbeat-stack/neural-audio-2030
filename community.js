@@ -17,7 +17,7 @@ const ready = Boolean(
 window.supabase &&
 cfg.supabaseUrl &&
 cfg.supabaseAnonKey &&
-cfg.supabaseUrl.startsWith("https://sxykgsebgqlhhcxhpmsi.supabase.co/storage/v1/object/public/community-videos/32a1e42a-008d-4f35-a78d-d099516597f4-hf_20260926_064918_7d38b1f5-ee1c-4006-bfed-790b33d5420b.mp4") &&
+cfg.supabaseUrl.startsWith("http://") &&
 !cfg.supabaseUrl.includes("PEGA_AQUI") &&
 !cfg.supabaseAnonKey.includes("PEGA_AQUI")
 );
